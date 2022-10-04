@@ -40,7 +40,7 @@ window.addEventListener('keydown', e => {
     cells[--index].innerHTML = ''
     cells[index].dataset.state = 0
     letters[index] = ''
-    filterWords()
+    filterWords(cells)
     return
   }
 
@@ -49,7 +49,7 @@ window.addEventListener('keydown', e => {
   if (index < NUM_CELLS) {
     cells[index].innerHTML = key
     letters[index++] = key
-    filterWords()
+    filterWords(cells)
   }
 
   // if (index % 5 > 0 || index === 0) {
@@ -64,33 +64,27 @@ window.addEventListener('keydown', e => {
   // index++
 })
 
-function filterWords() {
-  let lettersNot = []
-  let lettersNotAt = []
-  let lettersAt = []
+function filterWords(cells) {
+  let filters = [
+    {}, // 0: letters not in string
+    {}, // 1: letters in string at wrong position
+    {}, // 2: letters in string at correct position
+  ]
 
-  cells.forEach(c => {
-    if (c.innerHTML.length === 1) {
-      if (c.dataset.state === "0") {
-        lettersNot.push({ letter: c.innerHTML, index: c.dataset.index % 5 })
-      }
-      else if (c.dataset.state === "1") {
-        lettersNotAt.push({ letter: c.innerHTML, index: c.dataset.index % 5 })
-      }
-      else if (c.dataset.state === "2") {
-        lettersAt.push({ letter: c.innerHTML, index: c.dataset.index % 5 })
-      }
-    }
+  cells.filter(c => c.innerHTML.length === 1).forEach(c => {
+    filters[c.dataset.state][c.innerHTML.toLowerCase()] = c.dataset.index % 5
   })
 
-  const filteredWords = fiveLetterWords.filter(word => 
-    lettersNot.every(ln => word.indexOf(ln.letter.toLowerCase()) < 0)
-    && lettersNotAt.every(
-      lna => word.indexOf(lna.letter.toLowerCase()) > -1 
-      && word.indexOf(lna.letter.toLowerCase()) !== lna.index
-    )
-    && lettersAt.every(la => word.indexOf(la.letter.toLowerCase()) === la.index)
+  const keyFilter = (index, callback) => (
+    [...Object.keys(filters[index])].every(callback)
   )
+
+  const filteredWords = fiveLetterWords.filter(word => 
+    keyFilter(0, key => word.indexOf(key) < 0)
+    && keyFilter(1, key => word.indexOf(key) > -1 && word.indexOf(key) !== filters[1].key)
+    && keyFilter(2, key => word.indexOf(key) === filters[2].key)
+  )
+
   renderSuggestions(filteredWords)
 }
 
