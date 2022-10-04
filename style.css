@@ -4,8 +4,8 @@
   --gray-800: #1a1a1a;
   --gray-900: #0a0a0a;
 
-  --green-500: hsl(131, 46%, 39%);
-  --yellow-500: hsl(56, 74%, 60%);
+  --yellow-500: #cbb857;
+  --green-500: #369146;
 }
 
 * {
@@ -50,6 +50,14 @@ main {
   font-size: 2.25rem;
   font-weight: 600;
   line-height: 1em;
+}
+
+.cell[data-state="1"] {
+  background-color: var(--yellow-500);
+}
+
+.cell[data-state="2"] {
+  background-color: var(--green-500);
 }
 
 .suggestions-box {}
