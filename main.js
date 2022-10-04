@@ -14,9 +14,9 @@ let cells = []
 let letters = []
 let index = 0
 
-forNum(NUM_CELLS, (_, index) =>
+forNum(NUM_CELLS, (_, index) => {
   cells.push(render(cellsBox, `<div class="cell" data-index="${index}" data-state="0"></div>`))
-)
+})
 
 const fiveLetterWords = dictionary.filter(word => word.length === 5)
 renderSuggestions(fiveLetterWords)
@@ -28,7 +28,7 @@ cellsBox.addEventListener('click', e => {
   if (!cellIndex) return
   if (letters[cellIndex]) cell.dataset.state = (cell.dataset.state + 1) % 3
 
-  filterWords()
+  filterWords(cells)
 })
 
 window.addEventListener('keydown', e => {
@@ -72,17 +72,17 @@ function filterWords(cells) {
   ]
 
   cells.filter(c => c.innerHTML.length === 1).forEach(c => {
-    filters[c.dataset.state][c.innerHTML.toLowerCase()] = c.dataset.index % 5
+    filters[Number(c.dataset.state)][c.innerHTML.toLowerCase()] = c.dataset.index % 5
   })
 
   const keyFilter = (index, callback) => (
     [...Object.keys(filters[index])].every(callback)
   )
 
-  const filteredWords = fiveLetterWords.filter(word => 
-    keyFilter(0, key => word.indexOf(key) < 0)
-    && keyFilter(1, key => word.indexOf(key) > -1 && word.indexOf(key) !== filters[1].key)
-    && keyFilter(2, key => word.indexOf(key) === filters[2].key)
+  const filteredWords = fiveLetterWords.filter(w => 
+    keyFilter(0, key => w.indexOf(key) < 0)
+    && keyFilter(1, key => w.indexOf(key) > -1 && w.indexOf(key) !== filters[1][key])
+    && keyFilter(2, key => w.indexOf(key) === filters[2][key])
   )
 
   renderSuggestions(filteredWords)
