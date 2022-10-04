@@ -1,0 +1,43 @@
+:root {
+  --gray-100: #fafafa;
+  --gray-700: #2a2a2a;
+  --gray-800: #1a1a1a;
+  --gray-900: #0a0a0a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--gray-900);
+  color: var(--gray-100);
+  font-family: sans-serif;
+}
+
+main {
+  padding: 5rem 0;
+}
+
+.cell-container {
+  max-width: max-content;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0 auto;
+}
+
+.cell {
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid var(--gray-700);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1em;
+}
