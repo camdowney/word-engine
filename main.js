@@ -7,7 +7,9 @@ const suggestionsCol = render(split, '<div class="suggestions-col"></div>')
 const cellsBox = render(containerCol, '<div class="cells-box"></div>')
 const suggestionsBox = render(suggestionsCol, '<div class="suggestions-box"></div>')
 
+const MAX_SUGGESTIONS = 1000
 const NUM_CELLS = 30
+
 let cells = []
 let letters = []
 let index = 0
@@ -26,23 +28,7 @@ cellsBox.addEventListener('click', e => {
   if (!cellIndex) return
   if (letters[cellIndex]) cell.dataset.state = (cell.dataset.state + 1) % 3
 
-  let lettersNotAt = []
-  let lettersAt = []
-
-  cells.forEach(cell => {
-    if (cell.innerHTML.length === 1) {
-      const state = cell.dataset.state
-
-      if (state === 1) {
-
-      }
-    }
-  })
-
-  console.log(lettersNotAt, lettersAt)
-
-  const filteredWords = fiveLetterWords.filter(Boolean)
-  renderSuggestions(filteredWords)
+  filterWords()
 })
 
 window.addEventListener('keydown', e => {
@@ -54,6 +40,7 @@ window.addEventListener('keydown', e => {
     cells[--index].innerHTML = ''
     cells[index].dataset.state = 0
     letters[index] = ''
+    filterWords()
     return
   }
 
@@ -62,6 +49,7 @@ window.addEventListener('keydown', e => {
   if (index < NUM_CELLS) {
     cells[index].innerHTML = key
     letters[index++] = key
+    filterWords()
   }
 
   // if (index % 5 > 0 || index === 0) {
@@ -76,12 +64,44 @@ window.addEventListener('keydown', e => {
   // index++
 })
 
+function filterWords() {
+  let lettersNot = []
+  let lettersNotAt = []
+  let lettersAt = []
+
+  cells.forEach(c => {
+    if (c.innerHTML.length === 1) {
+      if (c.dataset.state === "0") {
+        lettersNot.push({ letter: c.innerHTML, index: c.dataset.index % 5 })
+      }
+      else if (c.dataset.state === "1") {
+        lettersNotAt.push({ letter: c.innerHTML, index: c.dataset.index % 5 })
+      }
+      else if (c.dataset.state === "2") {
+        lettersAt.push({ letter: c.innerHTML, index: c.dataset.index % 5 })
+      }
+    }
+  })
+
+  const filteredWords = fiveLetterWords.filter(word => 
+    lettersNot.every(ln => word.indexOf(ln.letter.toLowerCase()) < 0)
+    && lettersNotAt.every(
+      lna => word.indexOf(lna.letter.toLowerCase()) > -1 
+      && word.indexOf(lna.letter.toLowerCase()) !== lna.index
+    )
+    && lettersAt.every(la => word.indexOf(la.letter.toLowerCase()) === la.index)
+  )
+  renderSuggestions(filteredWords)
+}
+
 function renderSuggestions(words) {
   suggestionsBox.innerHTML = ''
-  render(suggestionsBox, `<p class="suggestions-header">Showing ${words.length} possible words</p>`)
-  
+  const shown = MAX_SUGGESTIONS < words.length ? MAX_SUGGESTIONS : words.length
+  render(suggestionsBox, 
+    `<p class="suggestions-header">Showing ${shown} of ${words.length} possible words</p>`
+  )
   const suggestions = render(suggestionsBox, '<div class="suggestions"></div>')
-  render(suggestions, words.map(w => `<p>${w}</p>`).join(''))
+  render(suggestions, words.map(w => `<p>${w}</p>`).slice(0, shown).join(''))
 }
 
 function render(e, html) {
@@ -103,8 +123,4 @@ function forNum(num, callback) {
 
 function useFragment(html) {
   return document.createRange().createContextualFragment(html)
-}
-
-function replaceWith(e, component) {
-  e.parentNode.replaceChild(component, e)
 }
