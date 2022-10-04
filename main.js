@@ -1,13 +1,18 @@
+import { dictionary } from './dictionary.js'
+
 const app = document.querySelector('#app')
+const split = render(app, '<div class="split"></div>')
+const containerCol = render(split, '<div class="cells-col"></div>')
+const suggestionsCol = render(split, '<div class="suggestions-col"></div>')
+const cellsBox = render(containerCol, '<div class="cells-box"></div>')
+const suggestionsBox = render(suggestionsCol, '<div class="suggestions-box"></div>')
 
-app.innerHTML += '<div class="cell-container"></div>'
-const container = app.querySelector('.cell-container')
-
-let index = 0
 const NUM_CELLS = 30
+let cells = []
+let index = 0
 
 forNum(NUM_CELLS, () =>
-  container.innerHTML += '<div class="cell"></div>'
+  cells.push(render(cellsBox, '<div class="cell"></div>'))
 )
 
 window.addEventListener('keydown', e => {
@@ -16,19 +21,27 @@ window.addEventListener('keydown', e => {
   const key = e.key.toUpperCase()
 
   if (key === 'BACKSPACE' && index > 0) {
-    container.querySelectorAll('.cell')[--index].innerHTML = ''
+    cells[--index].innerHTML = ''
     return
   }
 
   if (isLetter(key) && index < NUM_CELLS) {
-    container.querySelectorAll('.cell')[index++].innerHTML = key
+    cells[index++].innerHTML = key
   }
 })
 
-function render(e, html, overwrite = false) {
-  overwrite ? e.innerHTML = html : e.innerHTML += html
-  const children = e.querySelectorAll('*')
-  return children[children.length - 1]
+const possibleWords = filterWords({ length: 5 })
+suggestionsBox.innerHTML = ''
+render(suggestionsBox, `<p class="suggestions-header">Showing ${possibleWords.length} possible words</p>`)
+
+const suggestions = render(suggestionsBox, '<div class="suggestions"></div>')
+render(suggestions, possibleWords.map(w => `<p>${w}</p>`).join(''))
+
+function render(e, html) {
+  if (!e || !html) return
+  const newElement = useFragment(html)
+  e.appendChild(newElement)
+  return e.children[e.children.length - 1]
 }
 
 function isLetter(str) {
@@ -36,7 +49,19 @@ function isLetter(str) {
   return str.length === 1 && str.toLowerCase().match(/[a-z]/)
 }
 
+function filterWords(query) {
+  return dictionary.filter(word => word.length === query.length)
+}
+
 function forNum(num, callback) {
   if (Number.isNaN(num)) return
   Array.from(Array(num)).forEach(callback)
+}
+
+function useFragment(html) {
+  return document.createRange().createContextualFragment(html)
+}
+
+function replaceWith(e, component) {
+  e.parentNode.replaceChild(component, e)
 }
