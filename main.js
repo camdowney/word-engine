@@ -32,24 +32,24 @@ cellsBox.addEventListener('click', e => {
 })
 
 window.addEventListener('keydown', e => {
-  if (e.repeat) return
-
   const key = e.key.toUpperCase()
 
   if (key === 'BACKSPACE' && index > 0) {
-    cells[--index].innerHTML = ''
+    index--
+    cells[index].innerHTML = ''
     cells[index].dataset.state = 0
     letters[index] = ''
     filterWords(cells)
     return
   }
 
-  if (!isLetter(key)) return
+  if (e.repeat || !isLetter(key)) return
 
   if (index < NUM_CELLS) {
     cells[index].innerHTML = key
-    letters[index++] = key
+    letters[index] = key
     filterWords(cells)
+    index++
   }
 
   // if (index % 5 > 0 || index === 0) {
@@ -64,25 +64,41 @@ window.addEventListener('keydown', e => {
   // index++
 })
 
+/*
+* Specialized functions
+*/
 function filterWords(cells) {
-  let filters = [
-    {}, // 0: letters not in string
-    {}, // 1: letters in string at wrong position
-    {}, // 2: letters in string at correct position
-  ]
-
+  let includeLetters = {}
+  let excludeLetters = {}
+  
   cells.filter(c => c.innerHTML.length === 1).forEach(c => {
-    filters[Number(c.dataset.state)][c.innerHTML.toLowerCase()] = c.dataset.index % 5
+    const state = Number(c.dataset.state)
+    const index = Number(c.dataset.index)
+
+    if (state === 0) {
+      forNum(5, (_, i) => {
+        excludeLetters[i][c.innerHTML] = 1
+      })
+    }
+    else if (state === 1) {
+      excludeLetters[index % 5][c.innerHTML] = 1
+
+      forNum(5, (_, i) => {
+        if (i !== index % 5) {
+          includeLetters[i][c.innerHTML] = 1
+        }
+      })
+    }
+    else if (state === 2) {
+      includeLetters[index % 5][c.innerHTML] = 1
+    }
   })
 
-  const keyFilter = (index, callback) => (
-    [...Object.keys(filters[index])].every(callback)
-  )
+  console.log(includeLetters, excludeLetters)
 
-  const filteredWords = fiveLetterWords.filter(w => 
-    keyFilter(0, key => w.indexOf(key) < 0)
-    && keyFilter(1, key => w.indexOf(key) > -1 && w.indexOf(key) !== filters[1][key])
-    && keyFilter(2, key => w.indexOf(key) === filters[2][key])
+  const filteredWords = fiveLetterWords.filter(word =>
+    keys(includeLetters).every(key => includeLetters[key].includes(word.charAt(key).toUpperCase()))
+    && keys(excludeLetters).every(key => !excludeLetters[key].includes(word.charAt(key).toUpperCase()))
   )
 
   renderSuggestions(filteredWords)
@@ -91,18 +107,23 @@ function filterWords(cells) {
 function renderSuggestions(words) {
   suggestionsBox.innerHTML = ''
   const shown = MAX_SUGGESTIONS < words.length ? MAX_SUGGESTIONS : words.length
-  render(suggestionsBox, 
-    `<p class="suggestions-header">Showing ${shown} of ${words.length} possible words</p>`
-  )
+  render(suggestionsBox, `<p class="suggestions-header">Showing ${shown} of ${words.length} possible words</p>`)
   const suggestions = render(suggestionsBox, '<div class="suggestions"></div>')
   render(suggestions, words.map(w => `<p>${w}</p>`).slice(0, shown).join(''))
 }
 
+/*
+* Generic functions
+*/
 function render(e, html) {
   if (!e || !html) return
   const newElement = useFragment(html)
   e.appendChild(newElement)
   return e.children[e.children.length - 1]
+}
+
+function useFragment(html) {
+  return document.createRange().createContextualFragment(html)
 }
 
 function isLetter(str) {
@@ -115,6 +136,7 @@ function forNum(num, callback) {
   Array.from(Array(num)).forEach(callback)
 }
 
-function useFragment(html) {
-  return document.createRange().createContextualFragment(html)
+function keys(obj) {
+  if (!obj) return []
+  return [...Object.keys(obj)]
 }
