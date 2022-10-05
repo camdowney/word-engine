@@ -68,8 +68,9 @@ window.addEventListener('keydown', e => {
 * Specialized functions
 */
 function filterWords(cells) {
-  let includeLetters = {}
-  let excludeLetters = {}
+  let notLetter = [[], [], [], [], []]
+  let letterNotAt = [[], [], [], [], []]
+  let letterAt = [[], [], [], [], []]
   
   cells.filter(c => c.innerHTML.length === 1).forEach(c => {
     const state = Number(c.dataset.state)
@@ -77,28 +78,21 @@ function filterWords(cells) {
 
     if (state === 0) {
       forNum(5, (_, i) => {
-        excludeLetters[i][c.innerHTML] = 1
+        notLetter[i].push(c.innerHTML)
       })
     }
     else if (state === 1) {
-      excludeLetters[index % 5][c.innerHTML] = 1
-
-      forNum(5, (_, i) => {
-        if (i !== index % 5) {
-          includeLetters[i][c.innerHTML] = 1
-        }
-      })
+      letterNotAt[index % 5].push(c.innerHTML)
     }
     else if (state === 2) {
-      includeLetters[index % 5][c.innerHTML] = 1
+      letterAt[index % 5].push(c.innerHTML)
     }
   })
 
-  console.log(includeLetters, excludeLetters)
-
   const filteredWords = fiveLetterWords.filter(word =>
-    keys(includeLetters).every(key => includeLetters[key].includes(word.charAt(key).toUpperCase()))
-    && keys(excludeLetters).every(key => !excludeLetters[key].includes(word.charAt(key).toUpperCase()))
+    notLetter.every((arr, i) => !arr.includes(word.charAt(i).toUpperCase()))
+    && letterNotAt.every((arr, i) => !arr.length || arr.indexOf(word.charAt(i).toUpperCase()) !== i)
+    && letterAt.every((arr, i) => !arr.length || arr.includes(word.charAt(i).toUpperCase()))
   )
 
   renderSuggestions(filteredWords)
