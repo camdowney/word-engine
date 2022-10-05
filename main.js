@@ -68,7 +68,7 @@ window.addEventListener('keydown', e => {
 * Specialized functions
 */
 function filterWords(cells) {
-  let notLetter = [[], [], [], [], []]
+  let notLetter = []
   let letterNotAt = [[], [], [], [], []]
   let letterAt = [[], [], [], [], []]
   
@@ -77,9 +77,7 @@ function filterWords(cells) {
     const index = Number(c.dataset.index)
 
     if (state === 0) {
-      forNum(5, (_, i) => {
-        notLetter[i].push(c.innerHTML)
-      })
+      notLetter.push(c.innerHTML)
     }
     else if (state === 1) {
       letterNotAt[index % 5].push(c.innerHTML)
@@ -89,10 +87,11 @@ function filterWords(cells) {
     }
   })
 
-  const filteredWords = fiveLetterWords.filter(word =>
-    notLetter.every((arr, i) => !arr.includes(word.charAt(i).toUpperCase()))
-    && letterNotAt.every((arr, i) => !arr.length || arr.indexOf(word.charAt(i).toUpperCase()) !== i)
-    && letterAt.every((arr, i) => !arr.length || arr.includes(word.charAt(i).toUpperCase()))
+  const filteredWords = fiveLetterWords.map(word => word.toUpperCase()).filter(word =>
+    notLetter.every(l => !word.includes(l))
+    && letterNotAt.every(l => word.includes(l))
+    && letterNotAt.every((arr, i) => arr.indexOf(word.charAt(i)) !== i)
+    && letterAt.every((arr, i) => !arr.length || arr.includes(word.charAt(i)))
   )
 
   renderSuggestions(filteredWords)
@@ -103,7 +102,7 @@ function renderSuggestions(words) {
   const shown = MAX_SUGGESTIONS < words.length ? MAX_SUGGESTIONS : words.length
   render(suggestionsBox, `<p class="suggestions-header">Showing ${shown} of ${words.length} possible words</p>`)
   const suggestions = render(suggestionsBox, '<div class="suggestions"></div>')
-  render(suggestions, words.map(w => `<p>${w}</p>`).slice(0, shown).join(''))
+  render(suggestions, words.map(w => `<p>${w.toLowerCase()}</p>`).slice(0, shown).join(''))
 }
 
 /*
