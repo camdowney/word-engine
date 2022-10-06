@@ -6,6 +6,11 @@
 
   --yellow-500: #cbb857;
   --green-500: #369146;
+
+  --cols-2: repeat(2, minmax(0, 1fr));
+  --cols-3: repeat(3, minmax(0, 1fr));
+  --cols-4: repeat(4, minmax(0, 1fr));
+  --cols-5: repeat(5, minmax(0, 1fr));
 }
 
 * {
@@ -28,7 +33,7 @@ main {
 .split {
   max-width: max-content;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: var(--cols-2);
   gap: 5rem;
   padding: 0 2rem;
   margin: 0 auto;
@@ -36,7 +41,7 @@ main {
 
 .cells-box {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: var(--cols-5);
   gap: 5px;
   margin-left: auto;
 }
