@@ -14,8 +14,8 @@ let cells = []
 let letters = []
 let index = 0
 
-forNum(NUM_CELLS, (_, index) => {
-  cells.push(render(cellsBox, `<div class="cell" data-index="${index}" data-state="0"></div>`))
+forNum(NUM_CELLS, i => {
+  cells.push(render(cellsBox, `<div class="cell" data-index="${i}" data-state="0"></div>`))
 })
 
 const fiveLetterWords = dictionary.filter(word => word.length === 5)
@@ -79,7 +79,7 @@ console.log(sum)
 /*
 * Specialized functions
 */
-function filterWords(allWords, cells) {
+function filterWords(words, cells) {
   const exactLength = false
   const minLength = false
   const maxLength = false
@@ -122,7 +122,7 @@ function filterWords(allWords, cells) {
   // const rows = filledCells.reduce((acc, cell) => acc += cell.innerHTML, '').match(/.{1,5}/g)
   // console.log(rows)
 
-  const filteredWords = allWords.map(word => word.toUpperCase()).filter(word =>
+  const filteredWords = words.map(word => word.toUpperCase()).filter(word =>
     (!exactLength || word.length === exactLength)
     && (!minLength || word.length >= minLength)
     && (!maxLength || word.length <= maxLength)
@@ -162,13 +162,12 @@ function useFragment(html) {
 }
 
 function isLetter(str) {
-  if (!str) return false
-  return str.length === 1 && str.toLowerCase().match(/[a-z]/)
+  return str && str.length === 1 && str.toLowerCase().match(/[a-z]/)
 }
 
 function forNum(num, callback) {
   if (Number.isNaN(num)) return
-  Array.from(Array(num)).forEach(callback)
+  [...Array(num).keys()].forEach(callback)
 }
 
 function keys(obj) {
