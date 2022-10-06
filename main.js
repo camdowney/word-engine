@@ -104,6 +104,7 @@ function filterWords(words, cells) {
     }
     else if (state === 1) {
       notHasLetterAt[index % 5].push(letter)
+      hasLetter.push(letter)
       // maxLetters[letter] = maxLetters[letter] + 1 || 1
     }
     else if (notHasLetterAt.some(arr => arr.includes(letter))) {
@@ -128,7 +129,6 @@ function filterWords(words, cells) {
     && (!maxLength || word.length <= maxLength)
     && notHasLetter.every(l => !word.includes(l))
     && hasLetter.every(l => word.includes(l))
-    && notHasLetterAt.every(l => word.includes(l))
     && notHasLetterAt.every((arr, i) => !arr.includes(word.charAt(i)))
     && hasLetterAt.every((arr, i) => !arr.length || arr.includes(word.charAt(i)))
     && keys(exactLetterCount).every(l => word.split(l).length - 1 === exactLetterCount[l])
