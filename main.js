@@ -87,20 +87,24 @@ function filterWords(allWords, cells) {
   let hasLetter = []
   let notHasLetterAt = [[], [], [], [], []]
   let hasLetterAt = [[], [], [], [], []]
-  let maxLetters = {}
+  let exactLetterCount = {}
+  let minLetterCount = {}
+  let maxLetterCount = {}
+
+  const filledCells = cells.filter(c => c.innerHTML.length === 1)  
   
-  cells.filter(c => c.innerHTML.length === 1).forEach(c => {
+  filledCells.forEach(c => {
     const state = Number(c.dataset.state)
     const index = Number(c.dataset.index)
     const letter = c.innerHTML
 
     if (state === 2) {
       hasLetterAt[index % 5].push(letter)
-      maxLetters[letter] = maxLetters[letter] + 1 || 1
+      // maxLetters[letter] = maxLetters[letter] + 1 || 1
     }
     else if (state === 1) {
       notHasLetterAt[index % 5].push(letter)
-      maxLetters[letter] = maxLetters[letter] + 1 || 1
+      // maxLetters[letter] = maxLetters[letter] + 1 || 1
     }
     else if (notHasLetterAt.some(arr => arr.includes(letter))) {
       notHasLetterAt[index % 5].push(letter)
@@ -113,7 +117,10 @@ function filterWords(allWords, cells) {
     }
   })
 
-  console.log(maxLetters)
+  // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
+
+  // const rows = filledCells.reduce((acc, cell) => acc += cell.innerHTML, '').match(/.{1,5}/g)
+  // console.log(rows)
 
   const filteredWords = allWords.map(word => word.toUpperCase()).filter(word =>
     (!exactLength || word.length === exactLength)
@@ -124,7 +131,9 @@ function filterWords(allWords, cells) {
     && notHasLetterAt.every(l => word.includes(l))
     && notHasLetterAt.every((arr, i) => !arr.includes(word.charAt(i)))
     && hasLetterAt.every((arr, i) => !arr.length || arr.includes(word.charAt(i)))
-    && keys(maxLetters).every(l => word.split(l).length - 1 <= maxLetters[l])
+    && keys(exactLetterCount).every(l => word.split(l).length - 1 === exactLetterCount[l])
+    && keys(minLetterCount).every(l => word.split(l).length - 1 >= minLetterCount[l])
+    && keys(maxLetterCount).every(l => word.split(l).length - 1 <= maxLetterCount[l])
   )
 
   renderSuggestions(filteredWords)
