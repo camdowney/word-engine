@@ -28,7 +28,7 @@ cellsBox.addEventListener('click', e => {
   if (!cellIndex) return
   if (letters[cellIndex]) cell.dataset.state = (cell.dataset.state + 1) % 3
 
-  filterWords(cells)
+  filterWords(fiveLetterWords, cells)
 })
 
 window.addEventListener('keydown', e => {
@@ -39,7 +39,7 @@ window.addEventListener('keydown', e => {
     cells[index].innerHTML = ''
     cells[index].dataset.state = 0
     letters[index] = ''
-    filterWords(cells)
+    filterWords(fiveLetterWords, cells)
     return
   }
 
@@ -48,7 +48,7 @@ window.addEventListener('keydown', e => {
   if (index < NUM_CELLS) {
     cells[index].innerHTML = key
     letters[index] = key
-    filterWords(cells)
+    filterWords(fiveLetterWords, cells)
     index++
   }
 
@@ -64,34 +64,61 @@ window.addEventListener('keydown', e => {
   // index++
 })
 
+let sum = 0
+
+fiveLetterWords.forEach(word1 => {
+  
+
+  // fiveLetterWords.forEach(word2 => {
+  //   sum++
+  // })
+})
+
+console.log(sum)
+
 /*
 * Specialized functions
 */
-function filterWords(cells) {
-  let notLetter = []
-  let letterNotAt = [[], [], [], [], []]
-  let letterAt = [[], [], [], [], []]
+function filterWords(allWords, cells) {
+  let notHasLetter = []
+  let hasLetter = []
+  let notHasLetterAt = [[], [], [], [], []]
+  let hasLetterAt = [[], [], [], [], []]
+  let maxLetters = {}
   
   cells.filter(c => c.innerHTML.length === 1).forEach(c => {
     const state = Number(c.dataset.state)
     const index = Number(c.dataset.index)
+    const letter = c.innerHTML
 
-    if (state === 0) {
-      notLetter.push(c.innerHTML)
+    if (state === 2) {
+      hasLetterAt[index % 5].push(letter)
+      maxLetters[letter] = maxLetters[letter] + 1 || 1
     }
     else if (state === 1) {
-      letterNotAt[index % 5].push(c.innerHTML)
+      notHasLetterAt[index % 5].push(letter)
+      maxLetters[letter] = maxLetters[letter] + 1 || 1
     }
-    else if (state === 2) {
-      letterAt[index % 5].push(c.innerHTML)
+    else if (notHasLetterAt.some(arr => arr.includes(letter))) {
+      notHasLetterAt[index % 5].push(letter)
+    }
+    else if (hasLetterAt.some(arr => arr.includes(letter))) {
+      notHasLetterAt[index % 5].push(letter)
+    }
+    else {
+      notHasLetter.push(letter)
     }
   })
 
-  const filteredWords = fiveLetterWords.map(word => word.toUpperCase()).filter(word =>
-    notLetter.every(l => !word.includes(l))
-    && letterNotAt.every(l => word.includes(l))
-    && letterNotAt.every((arr, i) => arr.indexOf(word.charAt(i)) !== i)
-    && letterAt.every((arr, i) => !arr.length || arr.includes(word.charAt(i)))
+  console.log(maxLetters)
+
+  const filteredWords = allWords.map(word => word.toUpperCase()).filter(word =>
+    notHasLetter.every(l => !word.includes(l))
+    && hasLetter.every(l => word.includes(l))
+    && notHasLetterAt.every(l => word.includes(l))
+    && notHasLetterAt.every((arr, i) => !arr.includes(word.charAt(i)))
+    && hasLetterAt.every((arr, i) => !arr.length || arr.includes(word.charAt(i)))
+    && keys(maxLetters).every(l => word.split(l).length - 1 <= maxLetters[l])
   )
 
   renderSuggestions(filteredWords)
