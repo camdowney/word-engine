@@ -80,6 +80,9 @@ console.log(sum)
 * Specialized functions
 */
 function filterWords(allWords, cells) {
+  const exactLength = false
+  const minLength = false
+  const maxLength = false
   let notHasLetter = []
   let hasLetter = []
   let notHasLetterAt = [[], [], [], [], []]
@@ -113,7 +116,10 @@ function filterWords(allWords, cells) {
   console.log(maxLetters)
 
   const filteredWords = allWords.map(word => word.toUpperCase()).filter(word =>
-    notHasLetter.every(l => !word.includes(l))
+    (!exactLength || word.length === exactLength)
+    && (!minLength || word.length >= minLength)
+    && (!maxLength || word.length <= maxLength)
+    && notHasLetter.every(l => !word.includes(l))
     && hasLetter.every(l => word.includes(l))
     && notHasLetterAt.every(l => word.includes(l))
     && notHasLetterAt.every((arr, i) => !arr.includes(word.charAt(i)))
