@@ -45,7 +45,8 @@ window.addEventListener('keydown', e => {
   const key = e.key.toLowerCase()
 
   if (key === 'backspace' && cellIndex > 0) {
-    cells[--cellIndex].innerHTML = ''
+    cellIndex--
+    cells[cellIndex].innerHTML = ''
     cells[cellIndex].dataset.state = 0
     updateSuggestions(fiveLetterWords, cells)
     return
@@ -72,13 +73,13 @@ function updateSuggestions(words, cells) {
     minLetterCount: {},
   }
 
-  const filledCells = cells.filter(cell => cell.innerHTML.length === 1)  
+  const cellMap = cells.filter(cell => cell.innerHTML.length === 1)
+    .map(cell => ({ letter: cell.innerHTML, state: Number(cell.dataset.state) }))
+
   
-  filledCells.forEach(cell => {
-    const state = Number(cell.dataset.state)
-    const index = Number(cell.dataset.index)
+  cellMap.forEach((cell, index) => {
+    const { letter, state } = cell
     const indexInRow = index % 5
-    const letter = cell.innerHTML
 
     if (state === 2) {
       filters.hasLetterAt[indexInRow].push(letter)
@@ -101,9 +102,6 @@ function updateSuggestions(words, cells) {
   })
 
   // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
-
-  // const rows = filledCells.reduce((acc, cell) => acc += cell.innerHTML, '').match(/.{1,5}/g)
-  // console.log(rows)
 
   rerenderSuggestionsBox(filterWords(words, filters))
 }
