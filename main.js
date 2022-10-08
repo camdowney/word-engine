@@ -10,7 +10,7 @@ const split = renderDiv(app, 'split')
 const cellsBox = renderDiv(split, 'cells-box')
 const suggestionsBox = renderDiv(split, 'suggestions-box')
 
-const MAX_SUGGESTIONS = 1000
+const MAX_SUGGESTIONS = 100
 const NUM_CELLS = 30
 
 let cells = []
