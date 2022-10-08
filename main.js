@@ -1,4 +1,4 @@
-import { dictionary } from './dictionary.js'
+import { fiveLetterWords } from './fiveLetterWords.js'
 import { render, renderDiv, isLetter, forNum } from './util.js'
 import filterWords from './filterWords.js'
 
@@ -10,7 +10,6 @@ const split = renderDiv(app, 'split')
 const cellsBox = renderDiv(split, 'cells-box')
 const suggestionsBox = renderDiv(split, 'suggestions-box')
 
-const fiveLetterWords = dictionary.filter(word => word.length === 5)
 const MAX_SUGGESTIONS = 1000
 const NUM_CELLS = 30
 
