@@ -1,33 +1,53 @@
-export function renderHtml(e, html) {
-  if (!e || !html) return
-  const newElement = useFragment(Array.isArray(html) ? html.join('') : html)
-  const count = newElement.children.length
-  e.appendChild(newElement)
-  return e.children[e.children.length - count]
-}
-
-export function render(e, props) {
-  if (!e) return
-  if (typeof props === 'string' || Array.isArray(props)) return renderHtml(e, props)
-  const { tag, ...atts } = props
-  const t = tag || 'div'
-  return renderHtml(e, `<${t} ${keys(atts).map(att => `${att}="${atts[att]}"`).join('')}></${t}>`)
-}
-
-export function renderID(e, id, props = {}) {
-  if (!e || !id) return
-  unmount(`#${id}`)
-  return render(e, { id, ...props })
-}
-
-export function unmount(query) {
-  if (!document.querySelector(query)) return
-  document.querySelector(query).remove()
-}
-
 export function useFragment(html) {
   return document.createRange().createContextualFragment(html)
 }
+
+export function createHtml(props) {
+  const { tag, ...atts } = props
+  const t = tag || 'div'
+  return `<${t} ${keys(atts).map(att => `${att}="${atts[att]}"`).join('')}></${t}>`
+}
+
+export function createDOM(props) {
+  if (!props) return useFragment('')
+  if (typeof props === 'string') return useFragment(props)
+  if (Array.isArray(props)) return props.map(createDOM)
+
+  const { children, blur, change, click, focus, scroll, submit, ...atts } = props
+  const listeners = { blur, change, click, focus, scroll, submit }
+  const newElement = useFragment(createHtml(atts))
+
+  keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))
+  if (!Array.isArray(children)) newElement.firstChild.appendChild(createDOM(children))
+  else children?.forEach(c => newElement.firstChild.appendChild(createDOM(c)))
+  
+  return newElement
+}
+
+export function render(origin, props) {
+  if (!origin) return
+  
+  const count = origin.children.length
+  const dom = createDOM(props)
+
+  if (Array.isArray(dom)) dom.forEach(d => origin.appendChild(d))
+  else origin.appendChild(dom)
+
+  return origin.children[count]
+}
+
+export function renderID(origin, id, props = {}) {
+  if (!origin || !id) return
+
+  const current = document.querySelector(`#${id}`)
+
+  if (!current) return render(origin, { id, ...props })
+
+  current.parentNode.replaceChild(createDOM({ id, ...props }), current)
+  return document.querySelector(`#${id}`)
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 
 export function isLetter(str) {
   return str && str.length === 1 && str.toLowerCase().match(/[a-z]/)
