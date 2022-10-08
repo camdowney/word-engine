@@ -1,14 +1,14 @@
 import { dictionary } from './dictionary.js'
-import { render, div, isLetter, forNum } from './util.js'
+import { render, renderDiv, isLetter, forNum } from './util.js'
 import filterWords from './filterWords.js'
 
 /*
 * UI Setup
 */
 const app = document.querySelector('#app')
-const split = div(app, 'split')
-const cellsBox = div(split, 'cells-box')
-const suggestionsBox = div(split, 'suggestions-box')
+const split = renderDiv(app, 'split')
+const cellsBox = renderDiv(split, 'cells-box')
+const suggestionsBox = renderDiv(split, 'suggestions-box')
 
 const fiveLetterWords = dictionary.filter(word => word.length === 5)
 const MAX_SUGGESTIONS = 1000
@@ -113,6 +113,6 @@ function rerenderSuggestionsBox(words) {
   suggestionsBox.innerHTML = ''
   const shown = MAX_SUGGESTIONS < words.length ? MAX_SUGGESTIONS : words.length
   render(suggestionsBox, `<p class="suggestions-header">Showing ${shown} of ${words.length} possible words</p>`)
-  const suggestions = div(suggestionsBox, 'suggestions')
+  const suggestions = renderDiv(suggestionsBox, 'suggestions')
   render(suggestions, words.map(w => `<p>${w}</p>`).slice(0, shown))
 }

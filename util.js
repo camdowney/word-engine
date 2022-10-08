@@ -6,7 +6,7 @@ export function render(e, html) {
   return e.children[e.children.length - 1]
 }
 
-export function div(e, className) {
+export function renderDiv(e, className) {
   return render(e, `<div class=${className}></div>`)
 }
 
