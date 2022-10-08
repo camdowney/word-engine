@@ -1,13 +1,13 @@
 import { fiveLetterWords } from './dictionary/fiveLetterWords.js'
-import { render, renderDiv, isLetter, forNum, getPageItems, getNumPages, unmount } from './util.js'
+import { render, renderID, isLetter, forNum, getPageItems, getNumPages } from './util.js'
 import filterWords from './filterWords.js'
 
 /*
 * UI Setup
 */
 const app = document.querySelector('#app')
-const split = renderDiv(app, 'split')
-const cellsBox = renderDiv(split, 'cells-box')
+const split = renderID(app, 'split')
+const cellsBox = renderID(split, 'cells-box')
 
 const NUM_CELLS = 30
 
@@ -15,7 +15,7 @@ let cells = []
 let cellIndex = 0
 
 forNum(NUM_CELLS, i => {
-  const cell = render(cellsBox, `<div class="cell" data-index="${i}"></div>`)
+  const cell = render(cellsBox, { class: 'cell', 'data-index': i })
   cells.push(cell)
 })
 
@@ -100,14 +100,14 @@ function filterAndUpdate(words, cells) {
 
   // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
 
-  updateSuggestions(filterWords(words, filters))
+  const filteredWords = filterWords(words, filters)
+  updateSuggestions(filteredWords)
 }
 
 function updateSuggestions(words) {
-  unmount('.suggestions-box')
-  const suggestionsBox = renderDiv(split, 'suggestions-box')
+  const suggestionsBox = renderID(split, 'suggestions-box')
   render(suggestionsBox, `<p class="suggestions-header">Showing ${words.length} possible words</p>`)
-  const suggestions = renderDiv(suggestionsBox, 'suggestions')
+  const suggestions = renderID(suggestionsBox, 'suggestions')
 
   const PAGE_SIZE = 100
   const allSuggestions = words.map(w => `<p>${w}</p>`)
@@ -125,7 +125,6 @@ function updateSuggestions(words) {
 }
 
 // Component function general structure:
-// 1. unmount()
-// 2. render()
-// 3. Initialize local variables and functions
-// 4. Call lifecycle functions / add event listeners
+// 1. renderID() or unmount() and re-render()
+// 2. Initialize local variables and functions
+// 3. Call lifecycle functions / add event listeners

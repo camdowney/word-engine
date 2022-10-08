@@ -27,10 +27,10 @@ html {
 }
 
 main {
-  padding: 5rem 0;
+  padding: 3rem 0;
 }
 
-.split {
+#split {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,7 +39,7 @@ main {
   margin: 0 auto;
 }
 
-.cells-box {
+#cells-box {
   max-width: 22rem;
   width: 100%;
   display: grid;
@@ -71,22 +71,26 @@ main {
   background-color: var(--green-500);
 }
 
-.suggestions-box {
+#suggestions-box {
   max-width: 22rem;
   width: 100%;
 }
 
-.suggestions-header {
+#suggestions-header {
   margin-bottom: 1rem;
 }
 
-.suggestions {
+#suggestions {
   max-height: 32rem;
   overflow-y: scroll;
 }
 
 @media (min-width: 992px) {
-  .split {
+  main {
+    padding: 5rem 0;
+  }
+  
+  #split {
     flex-direction: row;
     justify-content: center;
     align-items: start;

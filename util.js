@@ -1,18 +1,28 @@
-export function render(e, html) {
+export function renderHtml(e, html) {
   if (!e || !html) return
-  if (Array.isArray(html)) return e.innerHTML += html.join('')
-  const newElement = useFragment(html)
+  const newElement = useFragment(Array.isArray(html) ? html.join('') : html)
+  const count = newElement.children.length
   e.appendChild(newElement)
-  return e.children[e.children.length - 1]
+  return e.children[e.children.length - count]
+}
+
+export function render(e, props) {
+  if (!e) return
+  if (typeof props === 'string' || Array.isArray(props)) return renderHtml(e, props)
+  const { tag, ...atts } = props
+  const t = tag || 'div'
+  return renderHtml(e, `<${t} ${keys(atts).map(att => `${att}="${atts[att]}"`).join('')}></${t}>`)
+}
+
+export function renderID(e, id, props = {}) {
+  if (!e || !id) return
+  unmount(`#${id}`)
+  return render(e, { id, ...props })
 }
 
 export function unmount(query) {
   if (!document.querySelector(query)) return
   document.querySelector(query).remove()
-}
-
-export function renderDiv(e, className) {
-  return render(e, `<div class=${className}></div>`)
 }
 
 export function useFragment(html) {
