@@ -6,6 +6,11 @@ export function render(e, html) {
   return e.children[e.children.length - 1]
 }
 
+export function unmount(query) {
+  if (!document.querySelector(query)) return
+  document.querySelector(query).remove()
+}
+
 export function renderDiv(e, className) {
   return render(e, `<div class=${className}></div>`)
 }
@@ -26,4 +31,16 @@ export function forNum(num, callback) {
 export function keys(obj) {
   if (!obj) return []
   return [...Object.keys(obj)]
+}
+
+export function getPageItems(items, page = 0, pageSize) {
+  if (!items) return []
+  if (Number.isNaN(page) || page < 0 || page > getNumPages(items, pageSize) - 1 || !pageSize || pageSize < 1) 
+    return items
+  return items.slice((page * pageSize), (page + 1) * pageSize)
+}
+
+export function getNumPages(items, pageSize) {
+  if (!items || Number.isNaN(pageSize) || pageSize < 1) return 1
+  return Math.ceil(items.length / pageSize)
 }

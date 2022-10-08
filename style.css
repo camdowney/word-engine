@@ -59,6 +59,10 @@ main {
   text-transform: capitalize;
 }
 
+.cell[data-state] {
+  cursor: pointer;
+}
+
 .cell[data-state="1"] {
   background-color: var(--yellow-500);
 }

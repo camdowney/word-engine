@@ -1,5 +1,5 @@
 import { fiveLetterWords } from './dictionary/fiveLetterWords.js'
-import { render, renderDiv, isLetter, forNum } from './util.js'
+import { render, renderDiv, isLetter, forNum, getPageItems, getNumPages, unmount } from './util.js'
 import filterWords from './filterWords.js'
 
 /*
@@ -8,20 +8,18 @@ import filterWords from './filterWords.js'
 const app = document.querySelector('#app')
 const split = renderDiv(app, 'split')
 const cellsBox = renderDiv(split, 'cells-box')
-const suggestionsBox = renderDiv(split, 'suggestions-box')
 
-const MAX_SUGGESTIONS = 100
 const NUM_CELLS = 30
 
 let cells = []
 let cellIndex = 0
 
 forNum(NUM_CELLS, i => {
-  const cell = render(cellsBox, `<div class="cell" data-index="${i}" data-state="0"></div>`)
+  const cell = render(cellsBox, `<div class="cell" data-index="${i}"></div>`)
   cells.push(cell)
 })
 
-rerenderSuggestionsBox(fiveLetterWords)
+updateSuggestions(fiveLetterWords)
 
 /*
 * Modify cell state
@@ -35,7 +33,7 @@ cellsBox.addEventListener('click', e => {
   if (cell.innerHTML.length === 1) 
     cell.dataset.state = (cell.dataset.state + 1) % 3
 
-  updateSuggestions(fiveLetterWords, cells)
+  filterAndUpdate(fiveLetterWords, cells)
 })
 
 /*
@@ -47,23 +45,22 @@ window.addEventListener('keydown', e => {
   if (key === 'backspace' && cellIndex > 0) {
     cellIndex--
     cells[cellIndex].innerHTML = ''
-    cells[cellIndex].dataset.state = 0
-    updateSuggestions(fiveLetterWords, cells)
+    delete(cells[cellIndex].dataset.state)
+    filterAndUpdate(fiveLetterWords, cells)
     return
   }
 
   if (e.repeat || !isLetter(key)) return
 
   if (cellIndex < NUM_CELLS) {
-    cells[cellIndex++].innerHTML = key
-    updateSuggestions(fiveLetterWords, cells)
+    cells[cellIndex].innerHTML = key
+    cells[cellIndex].dataset.state = 0
+    cellIndex++
+    filterAndUpdate(fiveLetterWords, cells)
   }
 })
 
-/*
-* Specialized functions
-*/
-function updateSuggestions(words, cells) {
+function filterAndUpdate(words, cells) {
   let filters = {
     notHasLetter: [],
     hasLetter: [],
@@ -103,13 +100,32 @@ function updateSuggestions(words, cells) {
 
   // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
 
-  rerenderSuggestionsBox(filterWords(words, filters))
+  updateSuggestions(filterWords(words, filters))
 }
 
-function rerenderSuggestionsBox(words) {
-  suggestionsBox.innerHTML = ''
-  const shown = MAX_SUGGESTIONS < words.length ? MAX_SUGGESTIONS : words.length
-  render(suggestionsBox, `<p class="suggestions-header">Showing ${shown} of ${words.length} possible words</p>`)
+function updateSuggestions(words) {
+  unmount('.suggestions-box')
+  const suggestionsBox = renderDiv(split, 'suggestions-box')
+  render(suggestionsBox, `<p class="suggestions-header">Showing ${words.length} possible words</p>`)
   const suggestions = renderDiv(suggestionsBox, 'suggestions')
-  render(suggestions, words.map(w => `<p>${w}</p>`).slice(0, shown))
+
+  const PAGE_SIZE = 100
+  const allSuggestions = words.map(w => `<p>${w}</p>`)
+  const numPages = getNumPages(allSuggestions, PAGE_SIZE)
+  let currentPage = 0
+
+  let loadMoreSuggestions = () => {
+    if (suggestions.scrollTop < suggestions.scrollHeight - 1000) return
+    if (currentPage === numPages) return suggestions.removeEventListener('scroll', loadMoreSuggestions)
+    render(suggestions, getPageItems(allSuggestions, currentPage++, PAGE_SIZE))
+  }
+
+  loadMoreSuggestions()
+  suggestions.addEventListener('scroll', loadMoreSuggestions)
 }
+
+// Component function general structure:
+// 1. unmount()
+// 2. render()
+// 3. Initialize local variables and functions
+// 4. Call lifecycle functions / add event listeners
