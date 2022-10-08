@@ -1,4 +1,4 @@
-import { fiveLetterWords } from './fiveLetterWords.js'
+import { fiveLetterWords } from './dictionary/fiveLetterWords.js'
 import { render, renderDiv, isLetter, forNum } from './util.js'
 import filterWords from './filterWords.js'
 
