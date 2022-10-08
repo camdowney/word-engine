@@ -76,11 +76,11 @@ main {
   width: 100%;
 }
 
-#suggestions-header {
-  margin-bottom: 1rem;
+.suggestions-header {
+  margin-bottom: 0.5rem;
 }
 
-#suggestions {
+.suggestions {
   max-height: 32rem;
   overflow-y: scroll;
 }

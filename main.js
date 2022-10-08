@@ -1,5 +1,5 @@
 import { fiveLetterWords } from './dictionary/fiveLetterWords.js'
-import { render, renderID, isLetter, forNum, getPageItems, getNumPages } from './util.js'
+import { render, renderID, isLetter, forNum, getPageItems, getNumPages, createDOM } from './util.js'
 import filterWords from './filterWords.js'
 
 /*
@@ -15,11 +15,11 @@ let cells = []
 let cellIndex = 0
 
 forNum(NUM_CELLS, i => {
-  const cell = render(cellsBox, { class: 'cell', 'data-index': i })
+  const cell = render(cellsBox, { class: 'cell', data_index: i })
   cells.push(cell)
 })
 
-updateSuggestions(fiveLetterWords)
+renderSuggestions(fiveLetterWords)
 
 /*
 * Modify cell state
@@ -33,7 +33,7 @@ cellsBox.addEventListener('click', e => {
   if (cell.innerHTML.length === 1) 
     cell.dataset.state = (cell.dataset.state + 1) % 3
 
-  filterAndUpdate(fiveLetterWords, cells)
+  updateFilters(fiveLetterWords, cells)
 })
 
 /*
@@ -46,7 +46,7 @@ window.addEventListener('keydown', e => {
     cellIndex--
     cells[cellIndex].innerHTML = ''
     delete(cells[cellIndex].dataset.state)
-    filterAndUpdate(fiveLetterWords, cells)
+    updateFilters(fiveLetterWords, cells)
     return
   }
 
@@ -56,11 +56,11 @@ window.addEventListener('keydown', e => {
     cells[cellIndex].innerHTML = key
     cells[cellIndex].dataset.state = 0
     cellIndex++
-    filterAndUpdate(fiveLetterWords, cells)
+    updateFilters(fiveLetterWords, cells)
   }
 })
 
-function filterAndUpdate(words, cells) {
+function updateFilters(words, cells) {
   let filters = {
     notHasLetter: [],
     hasLetter: [],
@@ -101,13 +101,13 @@ function filterAndUpdate(words, cells) {
   // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
 
   const filteredWords = filterWords(words, filters)
-  updateSuggestions(filteredWords)
+  renderSuggestions(filteredWords)
 }
 
-function updateSuggestions(words) {
+function renderSuggestions(words) {
   const suggestionsBox = renderID(split, 'suggestions-box')
   render(suggestionsBox, `<p class="suggestions-header">Showing ${words.length} possible words</p>`)
-  const suggestions = renderID(suggestionsBox, 'suggestions')
+  const suggestions = render(suggestionsBox, { class: 'suggestions'})
 
   const PAGE_SIZE = 100
   const allSuggestions = words.map(w => `<p>${w}</p>`)

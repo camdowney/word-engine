@@ -1,11 +1,24 @@
-export function useFragment(html) {
-  return document.createRange().createContextualFragment(html)
+export function render(origin, props) {
+  if (!origin) return
+  
+  const count = origin.children.length
+  const dom = createDOM(props)
+
+  if (Array.isArray(dom)) dom.forEach(d => origin.appendChild(d))
+  else origin.appendChild(dom)
+
+  return origin.children[count]
 }
 
-export function createHtml(props) {
-  const { tag, ...atts } = props
-  const t = tag || 'div'
-  return `<${t} ${keys(atts).map(att => `${att}="${atts[att]}"`).join('')}></${t}>`
+export function renderID(origin, id, props = {}) {
+  if (!origin || !id) return
+
+  const current = document.querySelector(`#${id}`)
+  const allProps = { id, ...props }
+
+  if (!current) return render(origin, allProps)
+  current.parentNode.replaceChild(createDOM(allProps), current)
+  return document.querySelector(`#${id}`)
 }
 
 export function createDOM(props) {
@@ -24,27 +37,15 @@ export function createDOM(props) {
   return newElement
 }
 
-export function render(origin, props) {
-  if (!origin) return
-  
-  const count = origin.children.length
-  const dom = createDOM(props)
-
-  if (Array.isArray(dom)) dom.forEach(d => origin.appendChild(d))
-  else origin.appendChild(dom)
-
-  return origin.children[count]
+export function createHtml(props) {
+  const { tag, ...atts } = props
+  const t = tag || 'div'
+  const attHtml = (att) => `${att.replace(/_/g, '-')}="${atts[att]}"`
+  return `<${t} ${keys(atts).map(attHtml).join('')}></${t}>`
 }
 
-export function renderID(origin, id, props = {}) {
-  if (!origin || !id) return
-
-  const current = document.querySelector(`#${id}`)
-
-  if (!current) return render(origin, { id, ...props })
-
-  current.parentNode.replaceChild(createDOM({ id, ...props }), current)
-  return document.querySelector(`#${id}`)
+export function useFragment(html) {
+  return document.createRange().createContextualFragment(html)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
