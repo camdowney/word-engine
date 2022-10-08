@@ -114,7 +114,7 @@ function updateSuggestions(words) {
   const numPages = getNumPages(allSuggestions, PAGE_SIZE)
   let currentPage = 0
 
-  let loadMoreSuggestions = () => {
+  const loadMoreSuggestions = () => {
     if (suggestions.scrollTop < suggestions.scrollHeight - 1000) return
     if (currentPage === numPages) return suggestions.removeEventListener('scroll', loadMoreSuggestions)
     render(suggestions, getPageItems(allSuggestions, currentPage++, PAGE_SIZE))
@@ -123,8 +123,3 @@ function updateSuggestions(words) {
   loadMoreSuggestions()
   suggestions.addEventListener('scroll', loadMoreSuggestions)
 }
-
-// Component function general structure:
-// 1. renderID() or unmount() and re-render()
-// 2. Initialize local variables and functions
-// 3. Call lifecycle functions / add event listeners
