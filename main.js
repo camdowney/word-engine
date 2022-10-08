@@ -7,23 +7,21 @@ import filterWords from './filterWords.js'
 */
 const app = document.querySelector('#app')
 const split = div(app, 'split')
-const containerCol = div(split, 'cells-col')
-const suggestionsCol = div(split, 'suggestions-col')
-const cellsBox = div(containerCol, 'cells-box')
-const suggestionsBox = div(suggestionsCol, 'suggestions-box')
+const cellsBox = div(split, 'cells-box')
+const suggestionsBox = div(split, 'suggestions-box')
 
+const fiveLetterWords = dictionary.filter(word => word.length === 5)
 const MAX_SUGGESTIONS = 1000
 const NUM_CELLS = 30
 
 let cells = []
-let letters = []
-let index = 0
+let cellIndex = 0
 
 forNum(NUM_CELLS, i => {
-  cells.push(render(cellsBox, `<div class="cell" data-index="${i}" data-state="0"></div>`))
+  const cell = render(cellsBox, `<div class="cell" data-index="${i}" data-state="0"></div>`)
+  cells.push(cell)
 })
 
-const fiveLetterWords = dictionary.filter(word => word.length === 5)
 rerenderSuggestionsBox(fiveLetterWords)
 
 /*
@@ -31,12 +29,14 @@ rerenderSuggestionsBox(fiveLetterWords)
 */
 cellsBox.addEventListener('click', e => {
   const cell = e.srcElement
-  const cellIndex = cell.dataset.index
+  const index = cell.dataset.index
 
-  if (!cellIndex) return
-  if (letters[cellIndex]) cell.dataset.state = (cell.dataset.state + 1) % 3
+  if (!index) return
 
-  filterFromCells(fiveLetterWords, cells)
+  if (cell.innerHTML.length === 1) 
+    cell.dataset.state = (cell.dataset.state + 1) % 3
+
+  updateSuggestions(fiveLetterWords, cells)
 })
 
 /*
@@ -45,63 +45,56 @@ cellsBox.addEventListener('click', e => {
 window.addEventListener('keydown', e => {
   const key = e.key.toLowerCase()
 
-  if (key === 'backspace' && index > 0) {
-    index--
-    cells[index].innerHTML = ''
-    cells[index].dataset.state = 0
-    letters[index] = ''
-    filterFromCells(fiveLetterWords, cells)
+  if (key === 'backspace' && cellIndex > 0) {
+    cells[--cellIndex].innerHTML = ''
+    cells[cellIndex].dataset.state = 0
+    updateSuggestions(fiveLetterWords, cells)
     return
   }
 
   if (e.repeat || !isLetter(key)) return
 
-  if (index < NUM_CELLS) {
-    cells[index].innerHTML = key
-    letters[index] = key
-    filterFromCells(fiveLetterWords, cells)
-    index++
+  if (cellIndex < NUM_CELLS) {
+    cells[cellIndex++].innerHTML = key
+    updateSuggestions(fiveLetterWords, cells)
   }
 })
 
 /*
 * Specialized functions
 */
-function filterFromCells(words, cells) {
+function updateSuggestions(words, cells) {
   let filters = {
-    exactLength: false,
-    minLength: false,
-    maxLength: false,
     notHasLetter: [],
     hasLetter: [],
     notHasLetterAt: [[], [], [], [], []],
     hasLetterAt: [[], [], [], [], []],
     exactLetterCount: {},
     minLetterCount: {},
-    maxLetterCount: {},
   }
 
-  const filledCells = cells.filter(c => c.innerHTML.length === 1)  
+  const filledCells = cells.filter(cell => cell.innerHTML.length === 1)  
   
-  filledCells.forEach(c => {
-    const state = Number(c.dataset.state)
-    const index = Number(c.dataset.index)
-    const letter = c.innerHTML
+  filledCells.forEach(cell => {
+    const state = Number(cell.dataset.state)
+    const index = Number(cell.dataset.index)
+    const indexInRow = index % 5
+    const letter = cell.innerHTML
 
     if (state === 2) {
-      filters.hasLetterAt[index % 5].push(letter)
+      filters.hasLetterAt[indexInRow].push(letter)
       // maxLetters[letter] = maxLetters[letter] + 1 || 1
     }
     else if (state === 1) {
-      filters.notHasLetterAt[index % 5].push(letter)
+      filters.notHasLetterAt[indexInRow].push(letter)
       filters.hasLetter.push(letter)
       // maxLetters[letter] = maxLetters[letter] + 1 || 1
     }
     else if (filters.notHasLetterAt.some(arr => arr.includes(letter))) {
-      filters.notHasLetterAt[index % 5].push(letter)
+      filters.notHasLetterAt[indexInRow].push(letter)
     }
     else if (filters.hasLetterAt.some(arr => arr.includes(letter))) {
-      filters.notHasLetterAt[index % 5].push(letter)
+      filters.notHasLetterAt[indexInRow].push(letter)
     }
     else {
       filters.notHasLetter.push(letter)

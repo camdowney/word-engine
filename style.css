@@ -31,29 +31,29 @@ main {
 }
 
 .split {
-  max-width: max-content;
-  display: grid;
-  grid-template-columns: var(--cols-2);
-  gap: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
   padding: 0 2rem;
   margin: 0 auto;
 }
 
 .cells-box {
+  max-width: 22rem;
+  width: 100%;
   display: grid;
   grid-template-columns: var(--cols-5);
   gap: 5px;
-  margin-left: auto;
 }
 
 .cell {
-  width: 4rem;
-  height: 4rem;
+  aspect-ratio: 1;
   border: 2px solid var(--gray-700);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 600;
   line-height: 1em;
   text-transform: capitalize;
@@ -67,7 +67,10 @@ main {
   background-color: var(--green-500);
 }
 
-.suggestions-box {}
+.suggestions-box {
+  max-width: 22rem;
+  width: 100%;
+}
 
 .suggestions-header {
   margin-bottom: 1rem;
@@ -76,4 +79,17 @@ main {
 .suggestions {
   max-height: 32rem;
   overflow-y: scroll;
+}
+
+@media (min-width: 992px) {
+  .split {
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    gap: 5rem;
+  }
+
+  .cell {
+    font-size: 2.25rem;
+  }
 }
