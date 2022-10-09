@@ -22,8 +22,8 @@ export function renderID(origin, id, props = {}) {
 }
 
 export function createDOM(props) {
-  if (!props) return useFragment('')
-  if (typeof props === 'string') return useFragment(props)
+  if (!props) return createFragment('')
+  if (typeof props === 'string') return createFragment(props)
   if (Array.isArray(props)) return props.map(createDOM)
 
   let listeners = {}
@@ -34,7 +34,7 @@ export function createDOM(props) {
   )
 
   const { children, ...atts } = cleanProps
-  const newElement = useFragment(createHTML(atts))
+  const newElement = createFragment(createHTML(atts))
 
   keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))
   if (!Array.isArray(children)) newElement.firstChild.appendChild(createDOM(children))
@@ -50,7 +50,7 @@ export function createHTML(props) {
   return `<${t} ${keys(atts).map(attHtml).join('')}></${t}>`
 }
 
-export function useFragment(html) {
+export function createFragment(html) {
   return document.createRange().createContextualFragment(html)
 }
 
