@@ -26,8 +26,14 @@ export function createDOM(props) {
   if (typeof props === 'string') return useFragment(props)
   if (Array.isArray(props)) return props.map(createDOM)
 
-  const { children, blur, change, click, focus, scroll, submit, ...atts } = props
-  const listeners = { blur, change, click, focus, scroll, submit }
+  let listeners = {}
+  let cleanProps = {}
+
+  keys(props).forEach(prop => 
+    prop.startsWith('_') ? listeners[prop.substring(1)] = props[prop] : cleanProps[prop] = props[prop]
+  )
+
+  const { children, ...atts } = cleanProps
   const newElement = useFragment(createHtml(atts))
 
   keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))

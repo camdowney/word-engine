@@ -2,9 +2,6 @@ import { fiveLetterWords } from './dictionary/fiveLetterWords.js'
 import { render, renderID, isLetter, forNum, getPageItems, getNumPages, createDOM } from './util.js'
 import filterWords from './filterWords.js'
 
-/*
-* UI Setup
-*/
 const app = document.querySelector('#app')
 const split = renderID(app, 'split')
 const cellsBox = renderID(split, 'cells-box')
@@ -21,9 +18,7 @@ forNum(NUM_CELLS, i => {
 
 renderSuggestions(fiveLetterWords)
 
-/*
-* Modify cell state
-*/
+// Modify cell state
 cellsBox.addEventListener('click', e => {
   const cell = e.srcElement
   const index = cell.dataset.index
@@ -36,16 +31,14 @@ cellsBox.addEventListener('click', e => {
   updateFilters(fiveLetterWords, cells)
 })
 
-/*
-* Add & remove letters
-*/
+// Add & remove letters
 window.addEventListener('keydown', e => {
   const key = e.key.toLowerCase()
 
   if (key === 'backspace' && cellIndex > 0) {
     cellIndex--
     cells[cellIndex].innerHTML = ''
-    delete(cells[cellIndex].dataset.state)
+    delete cells[cellIndex].dataset.state
     updateFilters(fiveLetterWords, cells)
     return
   }
@@ -104,11 +97,8 @@ function updateFilters(words, cells) {
   renderSuggestions(filteredWords)
 }
 
+// Component render function
 function renderSuggestions(words) {
-  const suggestionsBox = renderID(split, 'suggestions-box')
-  render(suggestionsBox, `<p class="suggestions-header">Showing ${words.length} possible words</p>`)
-  const suggestions = render(suggestionsBox, { class: 'suggestions'})
-
   const PAGE_SIZE = 100
   const allSuggestions = words.map(w => `<p>${w}</p>`)
   const numPages = getNumPages(allSuggestions, PAGE_SIZE)
@@ -120,6 +110,9 @@ function renderSuggestions(words) {
     render(suggestions, getPageItems(allSuggestions, currentPage++, PAGE_SIZE))
   }
 
+  const suggestionsBox = renderID(split, 'suggestions-box')
+  render(suggestionsBox, `<p class="suggestions-header">Showing ${words.length} possible words</p>`)
+  const suggestions = render(suggestionsBox, { class: 'suggestions', _scroll: loadMoreSuggestions })
+
   loadMoreSuggestions()
-  suggestions.addEventListener('scroll', loadMoreSuggestions)
 }
