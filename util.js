@@ -34,7 +34,7 @@ export function createDOM(props) {
   )
 
   const { children, ...atts } = cleanProps
-  const newElement = useFragment(createHtml(atts))
+  const newElement = useFragment(createHTML(atts))
 
   keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))
   if (!Array.isArray(children)) newElement.firstChild.appendChild(createDOM(children))
@@ -43,7 +43,7 @@ export function createDOM(props) {
   return newElement
 }
 
-export function createHtml(props) {
+export function createHTML(props) {
   const { tag, ...atts } = props
   const t = tag || 'div'
   const attHtml = (att) => `${att.replace(/_/g, '-')}="${atts[att]}"`
