@@ -6,7 +6,9 @@ export function render(origin, props) {
 
   if (Array.isArray(dom)) dom.forEach(d => origin.appendChild(d))
   else origin.appendChild(dom)
-  return origin.children[count]
+  const newElement = origin.children[count]
+  newElement.dispatchEvent(new Event('mount'))
+  return newElement
 }
 
 export function renderID(origin, id, props = {}) {
@@ -17,8 +19,12 @@ export function renderID(origin, id, props = {}) {
 
   if (!current && !origin) return
   if (!current) return render(origin, allProps)
+
+  current.dispatchEvent(new Event('unmount'))
   current.parentNode.replaceChild(createDOM(allProps), current)
-  return document.querySelector(`#${id}`)
+  const newElement = document.querySelector(`#${id}`)
+  newElement.dispatchEvent(new Event('mount'))
+  return newElement
 }
 
 export function createDOM(props) {

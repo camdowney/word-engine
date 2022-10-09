@@ -17,7 +17,7 @@ export default function renderSuggestions(origin, words = []) {
     children: [
       `<p class="suggestions-header">Showing ${words.length} possible words</p>`,
       { class: 'suggestions-list', _scroll: loadMoreSuggestions },
-    ]
+    ],
   })
 
   loadMoreSuggestions()
