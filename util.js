@@ -6,16 +6,16 @@ export function render(origin, props) {
 
   if (Array.isArray(dom)) dom.forEach(d => origin.appendChild(d))
   else origin.appendChild(dom)
-
   return origin.children[count]
 }
 
 export function renderID(origin, id, props = {}) {
-  if (!origin || !id) return
+  if (!id) return
 
   const current = document.querySelector(`#${id}`)
   const allProps = { id, ...props }
 
+  if (!current && !origin) return
   if (!current) return render(origin, allProps)
   current.parentNode.replaceChild(createDOM(allProps), current)
   return document.querySelector(`#${id}`)

@@ -30,7 +30,7 @@ main {
   padding: 3rem 0;
 }
 
-#split {
+.split {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,7 +39,7 @@ main {
   margin: 0 auto;
 }
 
-#cells-box {
+.cells-box {
   max-width: 22rem;
   width: 100%;
   display: grid;
@@ -71,7 +71,7 @@ main {
   background-color: var(--green-500);
 }
 
-#suggestions-box {
+#suggestions {
   max-width: 22rem;
   width: 100%;
 }
@@ -80,7 +80,7 @@ main {
   margin-bottom: 0.5rem;
 }
 
-.suggestions {
+.suggestions-list {
   max-height: 32rem;
   overflow-y: scroll;
 }

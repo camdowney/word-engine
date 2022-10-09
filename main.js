@@ -1,10 +1,12 @@
 import { fiveLetterWords } from './dictionary/fiveLetterWords.js'
-import { render, renderID, isLetter, forNum, getPageItems, getNumPages, createDOM } from './util.js'
+import { render, isLetter, forNum } from './util.js'
 import filterWords from './filterWords.js'
+import renderSuggestions from './renderSuggestions.js'
 
 const app = document.querySelector('#app')
-const split = renderID(app, 'split')
-const cellsBox = renderID(split, 'cells-box')
+const split = render(app, { class: 'split' })
+const cellsBox = render(split, { class: 'cells-box' })
+renderSuggestions(split, fiveLetterWords)
 
 const NUM_CELLS = 30
 
@@ -15,8 +17,6 @@ forNum(NUM_CELLS, i => {
   const cell = render(cellsBox, { class: 'cell', data_index: i })
   cells.push(cell)
 })
-
-renderSuggestions(fiveLetterWords)
 
 // Modify cell state
 cellsBox.addEventListener('click', e => {
@@ -94,25 +94,5 @@ function updateFilters(words, cells) {
   // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
 
   const filteredWords = filterWords(words, filters)
-  renderSuggestions(filteredWords)
-}
-
-// Component render function
-function renderSuggestions(words) {
-  const PAGE_SIZE = 100
-  const allSuggestions = words.map(w => `<p>${w}</p>`)
-  const numPages = getNumPages(allSuggestions, PAGE_SIZE)
-  let currentPage = 0
-
-  const loadMoreSuggestions = () => {
-    if (suggestions.scrollTop < suggestions.scrollHeight - 1000) return
-    if (currentPage === numPages) return suggestions.removeEventListener('scroll', loadMoreSuggestions)
-    render(suggestions, getPageItems(allSuggestions, currentPage++, PAGE_SIZE))
-  }
-
-  const suggestionsBox = renderID(split, 'suggestions-box')
-  render(suggestionsBox, `<p class="suggestions-header">Showing ${words.length} possible words</p>`)
-  const suggestions = render(suggestionsBox, { class: 'suggestions', _scroll: loadMoreSuggestions })
-
-  loadMoreSuggestions()
+  renderSuggestions(true, filteredWords)
 }
