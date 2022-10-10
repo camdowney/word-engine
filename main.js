@@ -1,59 +1,41 @@
 import { fiveLetterWords } from './dictionary/fiveLetterWords.js'
-import { render, isLetter, forNum } from './util.js'
-import filterWords from './filterWords.js'
-import Suggestions from './Suggestions.js'
-
-const app = document.querySelector('#app')
-const split = render(app, { class: 'split' })
-const cellsBox = render(split, { class: 'cells-box' })
-render(split, Suggestions(fiveLetterWords))
+import { render, isLetter } from './util.js'
+import CellGrid from './components/CellGrid.js'
+import Suggestions from './components/Suggestions.js'
 
 const NUM_CELLS = 30
-
-let cells = []
+let cells = [...Array(NUM_CELLS)]
 let cellIndex = 0
 
-forNum(NUM_CELLS, i => {
-  const cell = render(cellsBox, { class: 'cell', data_index: i })
-  cells.push(cell)
-})
+const updateCell = (e) => {
+  const index = e.srcElement.dataset.index
+  if (!index || !cells[index]) return
+  cells[index].state = (cells[index].state + 1) % 3
+  updateUI(fiveLetterWords, cells)
+}
 
-// Modify cell state
-cellsBox.addEventListener('click', e => {
-  const cell = e.srcElement
-  const index = cell.dataset.index
-
-  if (!index) return
-
-  if (cell.innerHTML.length === 1) 
-    cell.dataset.state = (cell.dataset.state + 1) % 3
-
-  updateFilters(fiveLetterWords, cells)
-})
+const app = document.querySelector('main')
+const layout = render(app, { class: 'split' })
+render(layout, CellGrid(cells, updateCell))
+render(layout, Suggestions(fiveLetterWords))
 
 // Add & remove letters
 window.addEventListener('keydown', e => {
   const key = e.key.toLowerCase()
 
   if (key === 'backspace' && cellIndex > 0) {
-    cellIndex--
-    cells[cellIndex].innerHTML = ''
-    delete cells[cellIndex].dataset.state
-    updateFilters(fiveLetterWords, cells)
+    cells[--cellIndex] = undefined
+    updateUI(fiveLetterWords, cells)
     return
   }
 
-  if (e.repeat || !isLetter(key)) return
+  if (e.repeat || !isLetter(key) || cellIndex === NUM_CELLS) return
 
-  if (cellIndex < NUM_CELLS) {
-    cells[cellIndex].innerHTML = key
-    cells[cellIndex].dataset.state = 0
-    cellIndex++
-    updateFilters(fiveLetterWords, cells)
-  }
+  cells[cellIndex++] = { letter: key, state: 0 }
+  updateUI(fiveLetterWords, cells)
 })
 
-function updateFilters(words, cells) {
+function updateUI(words, cells) {
   let filters = {
     notHasLetter: [],
     hasLetter: [],
@@ -62,12 +44,8 @@ function updateFilters(words, cells) {
     exactLetterCount: {},
     minLetterCount: {},
   }
-
-  const cellMap = cells.filter(cell => cell.innerHTML.length === 1)
-    .map(cell => ({ letter: cell.innerHTML, state: Number(cell.dataset.state) }))
-
   
-  cellMap.forEach((cell, index) => {
+  cells.filter(Boolean).forEach((cell, index) => {
     const { letter, state } = cell
     const indexInRow = index % 5
 
@@ -93,6 +71,6 @@ function updateFilters(words, cells) {
 
   // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
 
-  const filteredWords = filterWords(words, filters)
-  render(split, Suggestions(filteredWords))
+  render(layout, CellGrid(cells, updateCell))
+  render(layout, Suggestions(words, filters))
 }

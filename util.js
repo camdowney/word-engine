@@ -42,7 +42,7 @@ export function buildDOM(props) {
   const { tag, children, ...atts } = cleanProps
   const t = tag || 'div'
   const attString = (att) => `${att.replace(/_/g, '-')}="${atts[att]}"`
-  const newElement = createFragment(`<${t} ${keys(atts).map(attString).join('')}></${t}>`)
+  const newElement = createFragment(`<${t} ${keys(atts).filter(key => atts[key] !== undefined).map(attString).join('')}></${t}>`)
 
   keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))
   
