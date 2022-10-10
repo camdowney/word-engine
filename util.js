@@ -13,16 +13,15 @@ export function render(origin, props) {
     newElement.dispatchEvent(new Event('mount'))
     return newElement
   }
-  else {
-    const count = origin.children.length
+  
+  const count = origin.children.length
 
-    if (Array.isArray(created)) origin.append(...created)
-    else origin.append(created)
-    
-    const newElement = origin.children[count]
-    newElement.dispatchEvent(new Event('mount'))
-    return newElement
-  }
+  if (Array.isArray(created)) origin.append(...created)
+  else origin.append(created)
+  
+  const newElement = origin.children[count]
+  newElement.dispatchEvent(new Event('mount'))
+  return newElement
 }
 
 export function createElement(props) {
@@ -34,15 +33,13 @@ export function createElement(props) {
 
   let listeners = {}
   let cleanProps = {}
-
-  keys(props).forEach(p => 
-    p.startsWith('_') ? listeners[p.substring(1)] = props[p] : cleanProps[p] = props[p]
-  )
+  keys(props).forEach(p => p.startsWith('_') ? listeners[p.substring(1)] = props[p] : cleanProps[p] = props[p])
 
   const { tag, children, ...atts } = cleanProps
   const t = tag || 'div'
-  const attString = (att) => `${att.replace(/_/g, '-')}="${atts[att]}"`
-  const newElement = createFragment(`<${t} ${keys(atts).filter(key => atts[key] !== undefined).map(attString).join('')}></${t}>`)
+  const attString = (att) => `${att.replace('_', '-')}="${atts[att]}"`
+  const attHTML = keys(atts).filter(key => atts[key] !== undefined).map(attString).join('')
+  const newElement = createFragment(`<${t} ${attHTML}></${t}>`)
 
   keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))
   
