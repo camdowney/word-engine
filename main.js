@@ -1,41 +1,38 @@
-import { fiveLetterWords } from './dictionary/fiveLetterWords.js'
 import { render, isLetter } from './util.js'
 import CellGrid from './components/CellGrid.js'
 import Suggestions from './components/Suggestions.js'
 
 const NUM_CELLS = 30
-let cells = [...Array(NUM_CELLS)]
-let cellIndex = 0
-
-const updateCell = (e) => {
-  const index = e.srcElement.dataset.index
-  if (!index || !cells[index]) return
-  cells[index].state = (cells[index].state + 1) % 3
-  updateUI(fiveLetterWords, cells)
-}
+let cells = []
 
 const app = document.querySelector('main')
-const layout = render(app, { class: 'split' })
-render(layout, CellGrid(cells, updateCell))
-render(layout, Suggestions(fiveLetterWords))
+const layout = render(app, { tag: 'section', class: 'split' })
+render(layout, CellGrid(cells, updateCellState))
+render(layout, Suggestions())
+window.addEventListener('keydown', updateLetters)
 
-// Add & remove letters
-window.addEventListener('keydown', e => {
+function updateCellState(e) {
+  const index = e.srcElement.dataset.index
+  if (!cells[index]) return
+  cells[index].state = (cells[index].state + 1) % 3
+  updateUI(cells)
+}
+
+function updateLetters(e) {
   const key = e.key.toLowerCase()
 
-  if (key === 'backspace' && cellIndex > 0) {
-    cells[--cellIndex] = undefined
-    updateUI(fiveLetterWords, cells)
+  if (key === 'backspace' && cells.length > 0) {
+    cells.pop()
+    updateUI(cells)
     return
   }
 
-  if (e.repeat || !isLetter(key) || cellIndex === NUM_CELLS) return
+  if (e.repeat || !isLetter(key) || cells.length === NUM_CELLS) return
+  cells.push({ letter: key, state: 0 })
+  updateUI(cells)
+}
 
-  cells[cellIndex++] = { letter: key, state: 0 }
-  updateUI(fiveLetterWords, cells)
-})
-
-function updateUI(words, cells) {
+function updateUI(cells) {
   let filters = {
     notHasLetter: [],
     hasLetter: [],
@@ -71,6 +68,6 @@ function updateUI(words, cells) {
 
   // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
 
-  render(layout, CellGrid(cells, updateCell))
-  render(layout, Suggestions(words, filters))
+  render(layout, CellGrid(cells, updateCellState))
+  render(layout, Suggestions(filters))
 }

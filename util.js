@@ -1,13 +1,13 @@
 export function render(origin, props) {
   if (!origin) return
 
-  const built = buildDOM(props)
-  const id = '#' + built.firstChild?.id
+  const created = createElement(props)
+  const id = '#' + created.firstChild?.id
   const current = id.length > 1 && document.querySelector(id)
 
   if (current) {
     current.dispatchEvent(new Event('unmount'))
-    current.parentNode.replaceChild(built, current)
+    current.parentNode.replaceChild(created, current)
 
     const newElement = document.querySelector(id)
     newElement.dispatchEvent(new Event('mount'))
@@ -16,8 +16,8 @@ export function render(origin, props) {
   else {
     const count = origin.children.length
 
-    if (Array.isArray(built)) origin.append(...built)
-    else origin.append(built)
+    if (Array.isArray(created)) origin.append(...created)
+    else origin.append(created)
     
     const newElement = origin.children[count]
     newElement.dispatchEvent(new Event('mount'))
@@ -25,12 +25,12 @@ export function render(origin, props) {
   }
 }
 
-export function buildDOM(props) {
+export function createElement(props) {
   const createFragment = (html) => document.createRange().createContextualFragment(html)
 
   if (!props) return createFragment('')
   if (typeof props === 'string') return createFragment(props)
-  if (Array.isArray(props)) return props.map(buildDOM)
+  if (Array.isArray(props)) return props.map(createElement)
 
   let listeners = {}
   let cleanProps = {}
@@ -48,8 +48,8 @@ export function buildDOM(props) {
   
   if (!children) return newElement
 
-  if (Array.isArray(children)) newElement.firstChild.append(...buildDOM(children))
-  else newElement.firstChild.append(buildDOM(children))
+  if (Array.isArray(children)) newElement.firstChild.append(...createElement(children))
+  else newElement.firstChild.append(createElement(children))
 
   return newElement
 }
