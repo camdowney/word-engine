@@ -1,4 +1,4 @@
-import { build, render, getPageItems, getNumPages } from './util.js'
+import { render, getPageItems, getNumPages } from './util.js'
 
 const PAGE_SIZE = 100
 
@@ -14,12 +14,12 @@ export default function Suggestions(words = []) {
     render(list, getPageItems(allSuggestions, currentPage++, PAGE_SIZE))
   }
   
-  return build({
-    _mount: loadMoreSuggestions,
+  return {
     id: 'suggestions',
     children: [
       `<p class="suggestions-header">Showing ${words.length} possible words</p>`,
       { class: 'suggestions-list', _scroll: loadMoreSuggestions },
     ],
-  })
+    _mount: loadMoreSuggestions,
+  }
 }

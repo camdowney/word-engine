@@ -1,38 +1,36 @@
 export function render(origin, props) {
   if (!origin) return
 
-  const built = props.firstChild
-  const dom = built ? props : build(props)
-  const queryID = () => document.querySelector(`#${built?.id}`)
-  const current = queryID()
+  const built = buildDOM(props)
+  const id = '#' + built.firstChild?.id
+  const current = id.length > 1 && document.querySelector(id)
 
   if (current) {
     current.dispatchEvent(new Event('unmount'))
-    current.parentNode.replaceChild(dom, current)
-    const newElement = queryID()
+    current.parentNode.replaceChild(built, current)
+
+    const newElement = document.querySelector(id)
     newElement.dispatchEvent(new Event('mount'))
     return newElement
   }
   else {
     const count = origin.children.length
 
-    if (Array.isArray(dom))
-      dom.forEach(d => origin.appendChild(d))
-    else
-      origin.appendChild(dom)
-
+    if (Array.isArray(built)) origin.append(...built)
+    else origin.append(built)
+    
     const newElement = origin.children[count]
     newElement.dispatchEvent(new Event('mount'))
     return newElement
   }
 }
 
-export function build(props) {
+export function buildDOM(props) {
   const createFragment = (html) => document.createRange().createContextualFragment(html)
 
   if (!props) return createFragment('')
   if (typeof props === 'string') return createFragment(props)
-  if (Array.isArray(props)) return props.map(build)
+  if (Array.isArray(props)) return props.map(buildDOM)
 
   let listeners = {}
   let cleanProps = {}
@@ -43,15 +41,15 @@ export function build(props) {
 
   const { tag, children, ...atts } = cleanProps
   const t = tag || 'div'
-  const attHtml = (att) => `${att.replace(/_/g, '-')}="${atts[att]}"`
-  const newElement = createFragment(`<${t} ${keys(atts).map(attHtml).join('')}></${t}>`)
+  const attString = (att) => `${att.replace(/_/g, '-')}="${atts[att]}"`
+  const newElement = createFragment(`<${t} ${keys(atts).map(attString).join('')}></${t}>`)
 
   keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))
   
-  if (Array.isArray(children))
-    children?.forEach(c => newElement.firstChild.appendChild(build(c)))
-  else
-    newElement.firstChild.appendChild(build(children))
+  if (!children) return newElement
+
+  if (Array.isArray(children)) newElement.firstChild.append(...buildDOM(children))
+  else newElement.firstChild.append(buildDOM(children))
 
   return newElement
 }
