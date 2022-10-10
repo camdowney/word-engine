@@ -1,8 +1,8 @@
-import { createDOM, render, getPageItems, getNumPages } from './util.js'
+import { build, render, getPageItems, getNumPages } from './util.js'
 
 const PAGE_SIZE = 100
 
-export default function createSuggestions(words = []) {
+export default function Suggestions(words = []) {
   const allSuggestions = words.map(w => `<p>${w}</p>`)
   const numPages = getNumPages(allSuggestions, PAGE_SIZE)
   let currentPage = 0
@@ -14,7 +14,7 @@ export default function createSuggestions(words = []) {
     render(list, getPageItems(allSuggestions, currentPage++, PAGE_SIZE))
   }
   
-  return createDOM({
+  return build({
     _mount: loadMoreSuggestions,
     id: 'suggestions',
     children: [

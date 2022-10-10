@@ -1,12 +1,12 @@
 import { fiveLetterWords } from './dictionary/fiveLetterWords.js'
 import { render, isLetter, forNum } from './util.js'
 import filterWords from './filterWords.js'
-import createSuggestions from './createSuggestions.js'
+import Suggestions from './Suggestions.js'
 
 const app = document.querySelector('#app')
 const split = render(app, { class: 'split' })
 const cellsBox = render(split, { class: 'cells-box' })
-render(split, createSuggestions(fiveLetterWords))
+render(split, Suggestions(fiveLetterWords))
 
 const NUM_CELLS = 30
 
@@ -94,5 +94,5 @@ function updateFilters(words, cells) {
   // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
 
   const filteredWords = filterWords(words, filters)
-  render(split, createSuggestions(filteredWords))
+  render(split, Suggestions(filteredWords))
 }

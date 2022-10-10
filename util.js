@@ -1,9 +1,9 @@
 export function render(origin, props) {
   if (!origin) return
 
-  const created = props.firstChild
-  const dom = created ? props : createDOM(props)
-  const queryID = () => document.querySelector(`#${created?.id}`)
+  const built = props.firstChild
+  const dom = built ? props : build(props)
+  const queryID = () => document.querySelector(`#${built?.id}`)
   const current = queryID()
 
   if (current) {
@@ -15,45 +15,45 @@ export function render(origin, props) {
   }
   else {
     const count = origin.children.length
-    if (Array.isArray(dom)) dom.forEach(d => origin.appendChild(d))
-    else origin.appendChild(dom)
+
+    if (Array.isArray(dom))
+      dom.forEach(d => origin.appendChild(d))
+    else
+      origin.appendChild(dom)
+
     const newElement = origin.children[count]
     newElement.dispatchEvent(new Event('mount'))
     return newElement
   }
 }
 
-export function createDOM(props) {
+export function build(props) {
+  const createFragment = (html) => document.createRange().createContextualFragment(html)
+
   if (!props) return createFragment('')
   if (typeof props === 'string') return createFragment(props)
-  if (Array.isArray(props)) return props.map(createDOM)
+  if (Array.isArray(props)) return props.map(build)
 
   let listeners = {}
   let cleanProps = {}
 
-  keys(props).forEach(prop => 
-    prop.startsWith('_') ? listeners[prop.substring(1)] = props[prop] : cleanProps[prop] = props[prop]
+  keys(props).forEach(p => 
+    p.startsWith('_') ? listeners[p.substring(1)] = props[p] : cleanProps[p] = props[p]
   )
 
-  const { children, ...atts } = cleanProps
-  const newElement = createFragment(createHTML(atts))
-
-  keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))
-  if (!Array.isArray(children)) newElement.firstChild.appendChild(createDOM(children))
-  else children?.forEach(c => newElement.firstChild.appendChild(createDOM(c)))
-  
-  return newElement
-}
-
-export function createHTML(props) {
-  const { tag, ...atts } = props
+  const { tag, children, ...atts } = cleanProps
   const t = tag || 'div'
   const attHtml = (att) => `${att.replace(/_/g, '-')}="${atts[att]}"`
-  return `<${t} ${keys(atts).map(attHtml).join('')}></${t}>`
-}
+  const newElement = createFragment(`<${t} ${keys(atts).map(attHtml).join('')}></${t}>`)
 
-export function createFragment(html) {
-  return document.createRange().createContextualFragment(html)
+  keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))
+  
+  if (Array.isArray(children))
+    children?.forEach(c => newElement.firstChild.appendChild(build(c)))
+  else
+    newElement.firstChild.appendChild(build(children))
+
+  return newElement
 }
 
 /////////////////////////////////////////////////////////////////////////////////
