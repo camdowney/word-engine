@@ -90,7 +90,7 @@ main {
     padding: 5rem 0;
   }
   
-  #split {
+  .split {
     flex-direction: row;
     justify-content: center;
     align-items: start;

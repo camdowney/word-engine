@@ -1,30 +1,26 @@
 export function render(origin, props) {
   if (!origin) return
-  
-  const count = origin.children.length
-  const dom = createDOM(props)
 
-  if (Array.isArray(dom)) dom.forEach(d => origin.appendChild(d))
-  else origin.appendChild(dom)
-  const newElement = origin.children[count]
-  newElement.dispatchEvent(new Event('mount'))
-  return newElement
-}
+  const created = props.firstChild
+  const dom = created ? props : createDOM(props)
+  const queryID = () => document.querySelector(`#${created?.id}`)
+  const current = queryID()
 
-export function renderID(origin, id, props = {}) {
-  if (!id) return
-
-  const current = document.querySelector(`#${id}`)
-  const allProps = { id, ...props }
-
-  if (!current && !origin) return
-  if (!current) return render(origin, allProps)
-
-  current.dispatchEvent(new Event('unmount'))
-  current.parentNode.replaceChild(createDOM(allProps), current)
-  const newElement = document.querySelector(`#${id}`)
-  newElement.dispatchEvent(new Event('mount'))
-  return newElement
+  if (current) {
+    current.dispatchEvent(new Event('unmount'))
+    current.parentNode.replaceChild(dom, current)
+    const newElement = queryID()
+    newElement.dispatchEvent(new Event('mount'))
+    return newElement
+  }
+  else {
+    const count = origin.children.length
+    if (Array.isArray(dom)) dom.forEach(d => origin.appendChild(d))
+    else origin.appendChild(dom)
+    const newElement = origin.children[count]
+    newElement.dispatchEvent(new Event('mount'))
+    return newElement
+  }
 }
 
 export function createDOM(props) {
