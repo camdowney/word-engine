@@ -1,7 +1,6 @@
 export default function CellGrid(cells = [], updateCell) {
   return {
     id: 'cell-grid',
-    class: 'cells-box',
     children: cells.map((c, i) => ({
       class: 'cell',
       data_index: i,
