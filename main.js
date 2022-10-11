@@ -33,8 +33,6 @@ function updateLetters(e) {
 
 function updateUI() {
   let filters = {
-    notHasLetter: [],
-    hasLetter: [],
     notHasLetterAt: [[], [], [], [], []],
     hasLetterAt: [[], [], [], [], []],
     minLetterCount: {},
@@ -45,29 +43,21 @@ function updateUI() {
   
   cells.forEach((cell, index) => {
     const { letter, state } = cell
-    const indexInRow = index % 5
+    const row = Math.floor(index / 5)
+    const col = index % 5
 
-    if (state === 2) {
-      filters.hasLetterAt[indexInRow].push(letter)
-      // filters.minLetterCount[letter] = minLetterCount[letter] + 1 || 1
-    }
-    else if (state === 1) {
-      filters.notHasLetterAt[indexInRow].push(letter)
-      filters.minLetterCount[letter] = 1
-      // filters.hasLetter.push(letter)
-      // filters.minLetterCount[letter] = minLetterCount[letter] + 1 || 1
-    }
-    else if ([...filters.notHasLetterAt, ...filters.hasLetterAt].some(arr => arr.includes(letter))) {
-      filters.notHasLetterAt[indexInRow].push(letter)
-    }
-    else {
-      filters.maxLetterCount[letter] = 0
-    }
+    if (state > 0)
+      filters.minLetterCount[letter] = filters.minLetterCount[letter] + 1 || 1
+    else
+      filters.maxLetterCount[letter] = rows[row]?.filter(c => c.state > 0 && c.letter === letter).length || 0
+
+    if (state === 2)
+      filters.hasLetterAt[col].push(letter)
+    else if (state === 1)
+      filters.notHasLetterAt[col].push(letter)
+    else
+      filters.notHasLetterAt[col].push(letter)
   })
-
-  console.log(filters)
-
-  // ??? minLetters increases for each green/yellow, then becomes exactLetters when first gray is found
 
   render(layout, Board(cells, updateCellState))
   render(layout, Suggestions(filters))
