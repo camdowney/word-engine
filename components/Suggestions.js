@@ -1,4 +1,5 @@
-import { render, getPageItems, getNumPages } from '../util.js'
+import { render } from '../min.js'
+import { getPageItems, getNumPages } from '../util.js'
 import { fiveLetterWords } from '../dictionary/fiveLetterWords.js'
 import filterWords from '../filterWords.js'
 

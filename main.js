@@ -1,4 +1,5 @@
-import { render, isLetter, chunk } from './util.js'
+import { render } from './min.js'
+import { isLetter, chunk } from './util.js'
 import Board from './components/Board.js'
 import Suggestions from './components/Suggestions.js'
 

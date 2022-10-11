@@ -30,7 +30,7 @@ export function render(origin, props) {
   return newElement
 }
 
-export function createElement(props) {
+function createElement(props) {
   if (!props) return createFragment('')
   if (typeof props === 'string') return createFragment(props)
   if (Array.isArray(props)) return wrapElements(props.map(createElement))
