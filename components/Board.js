@@ -1,10 +1,10 @@
 const NUM_CELLS = 30
 
-export default function CellGrid(cells = [], updateCellState) {
+export default function Board(cells = [], updateCellState) {
   const emptyCells = Array(NUM_CELLS - cells.length)
 
   return {
-    id: 'cell-grid',
+    id: 'board',
     _click: updateCellState,
     children: [...cells, ...emptyCells].map((c, i) => ({
       class: 'cell',

@@ -20,10 +20,10 @@ export default function Suggestions(filters = []) {
   
   return {
     id: 'suggestions',
+    _mount: loadMoreSuggestions,
     children: [
       `<p class="suggestions-header">Showing ${filteredWords.length} possible words</p>`,
       { class: 'suggestions-list', _scroll: loadMoreSuggestions },
     ],
-    _mount: loadMoreSuggestions,
   }
 }

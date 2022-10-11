@@ -39,7 +39,7 @@ main {
   margin: 0 auto;
 }
 
-#cell-grid {
+#board {
   max-width: 22rem;
   width: 100%;
   display: grid;
