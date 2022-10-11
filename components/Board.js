@@ -6,7 +6,6 @@ export default function Board(cells = [], updateCellState) {
   return {
     id: 'board',
     _click: updateCellState,
-    _mount: () => document.querySelector('#board').focus(),
     children: [...cells, ...emptyCells].map((c, i) => ({
       class: 'cell',
       data_index: i,
