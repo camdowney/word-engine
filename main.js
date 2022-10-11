@@ -32,6 +32,11 @@ function updateLetters(e) {
 }
 
 function updateUI() {
+  render(layout, Board(cells, updateCellState))
+  render(layout, Suggestions(getFilters()))
+}
+
+function getFilters() {
   let filters = {
     notHasLetterAt: [[], [], [], [], []],
     hasLetterAt: [[], [], [], [], []],
@@ -59,6 +64,5 @@ function updateUI() {
       filters.notHasLetterAt[col].push(letter)
   })
 
-  render(layout, Board(cells, updateCellState))
-  render(layout, Suggestions(filters))
+  return filters
 }
