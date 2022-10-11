@@ -32,7 +32,9 @@ export function createElement(props) {
   const { tag, children, ...atts } = cleanProps
 
   const newElement = createFragment(createHTML(tag, atts))
-  keys(listeners).forEach(key => newElement.firstChild.addEventListener(key, listeners[key]))
+  keys(listeners).forEach(key => Array.isArray(listeners[key]) 
+    ? newElement.firstChild.addEventListener(key, e => listeners[key].forEach(l => l(e)))
+    : newElement.firstChild.addEventListener(key, listeners[key]))
   if (children) newElement.firstChild.append(createElement(children))
   return newElement
 }

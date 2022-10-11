@@ -5,7 +5,7 @@ export default function Board(cells = [], updateCellState) {
 
   return {
     id: 'board',
-    _click: updateCellState,
+    _click: [updateCellState, () => console.log('test')],
     children: [...cells, ...emptyCells].map((c, i) => ({
       class: 'cell',
       data_index: i,
