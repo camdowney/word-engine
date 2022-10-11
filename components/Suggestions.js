@@ -12,7 +12,7 @@ export default function Suggestions(filters = []) {
   let currentPage = 0
 
   const loadMoreSuggestions = () => {
-    const list = document.querySelector('#suggestions .suggestions-list')
+    const list = document.querySelector('#suggestions-list')
     if (list.scrollTop < list.scrollHeight - SCROLL_OFFSET) return
     if (currentPage === numPages) return list.removeEventListener('scroll', loadMoreSuggestions)
     render(list, getPageItems(allSuggestions, currentPage++, PAGE_SIZE))
@@ -23,7 +23,7 @@ export default function Suggestions(filters = []) {
     _mount: loadMoreSuggestions,
     children: [
       `<p class="suggestions-header">Showing ${filteredWords.length} possible words</p>`,
-      { class: 'suggestions-list', _scroll: loadMoreSuggestions },
+      { id: 'suggestions-list', _scroll: loadMoreSuggestions },
     ],
   }
 }

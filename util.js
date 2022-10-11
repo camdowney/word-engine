@@ -4,7 +4,7 @@ export function render(origin, props) {
   const created = createElement(props)
   const id = '#' + created.firstChild?.id
   const current = id.length > 1 && document.querySelector(id)
-  let newElement = undefined
+  let newElement = null
 
   if (current) {
     current.dispatchEvent(new Event('unmount'))
@@ -54,8 +54,6 @@ function createFragment(html) {
  return document.createRange().createContextualFragment(html)
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-
 export function isLetter(str) {
   return str && str.length === 1 && str.toLowerCase().match(/[a-z]/)
 }
@@ -66,8 +64,7 @@ export function forNum(num, callback) {
 }
 
 export function keys(obj) {
-  if (!obj) return []
-  return [...Object.keys(obj)]
+  return [...Object.keys(obj || {})]
 }
 
 export function getPageItems(items, page = 0, pageSize) {
@@ -79,4 +76,10 @@ export function getPageItems(items, page = 0, pageSize) {
 export function getNumPages(items, pageSize) {
   if (!items || Number.isNaN(pageSize) || pageSize < 1) return 1
   return Math.ceil(items.length / pageSize)
+}
+
+export function chunk(arr, size) {
+  if (!arr || !size) return []
+  if (arr.length < size) return arr
+  return [arr.slice(0, size), ...chunk(arr.slice(size), size)]
 }

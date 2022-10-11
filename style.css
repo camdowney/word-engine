@@ -80,7 +80,7 @@ main {
   margin-bottom: 0.5rem;
 }
 
-.suggestions-list {
+#suggestions-list {
   max-height: 32rem;
   overflow-y: scroll;
 }
