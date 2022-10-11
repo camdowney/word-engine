@@ -1,3 +1,12 @@
+export function useStore(id) {
+  if (!id) return
+
+  if (!window.FernStore) window.FernStore = {}
+  if (!window.FernStore[id]) window.FernStore[id] = {}
+
+  return window.FernStore[id]
+}
+
 export function render(origin, props) {
   if (!origin) return
 
@@ -56,6 +65,10 @@ function createFragment(html) {
  return document.createRange().createContextualFragment(html)
 }
 
+export function keys(obj) {
+  return [...Object.keys(obj || {})]
+}
+
 export function isLetter(str) {
   return str && str.length === 1 && str.toLowerCase().match(/[a-z]/)
 }
@@ -63,10 +76,6 @@ export function isLetter(str) {
 export function forNum(num, callback) {
   if (Number.isNaN(num)) return
   [...Array(num).keys()].forEach(callback)
-}
-
-export function keys(obj) {
-  return [...Object.keys(obj || {})]
 }
 
 export function getPageItems(items, page = 0, pageSize) {

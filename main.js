@@ -32,8 +32,9 @@ function updateLetters(e) {
 }
 
 function updateUI() {
+  const filters = getFilters()
   render(layout, Board(cells, updateCellState))
-  render(layout, Suggestions(getFilters()))
+  render(layout, Suggestions(filters))
 }
 
 function getFilters() {
