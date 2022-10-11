@@ -2,6 +2,7 @@ import { render } from './min.js'
 import { isLetter, chunk } from './util.js'
 import Board from './components/Board.js'
 import Suggestions from './components/Suggestions.js'
+import Counter from './components/Counter.js'
 
 const NUM_CELLS = 30
 let cells = []
@@ -10,6 +11,7 @@ const app = document.querySelector('main')
 const layout = render(app, { tag: 'section', class: 'split' })
 render(layout, Board(cells, updateCellState))
 render(layout, Suggestions())
+render(layout, Counter())
 window.addEventListener('keydown', updateLetters)
 
 function updateCellState(e) {

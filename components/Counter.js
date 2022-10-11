@@ -1,0 +1,20 @@
+import { render, useStore } from '../min.js'
+
+export default function Counter() {
+  const store = useStore('counter', { count: 0 })
+
+  const update = () => {
+    store.count++
+    console.log(arguments.callee.caller.toString())
+    render(true, Counter())
+  }
+
+  return {
+    id: 'counter',
+    _click: update,
+    children: {
+      tag: 'p',
+      children: store.count,
+    },
+  }
+}

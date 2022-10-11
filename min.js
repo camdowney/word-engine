@@ -1,1 +1,68 @@
-export function useStore(e){if(e)return window.FernStore||(window.FernStore={}),window.FernStore[e]||(window.FernStore[e]={}),window.FernStore[e]}export function render(e,t){if(!e)return;const r=createElement(t),n="#"+r.firstChild?.id,a=n.length>1&&document.querySelector(n);let i=null;if(a)a.dispatchEvent(new Event("unmount")),a.parentNode.replaceChild(r,a),i=document.querySelector(n);else{const t=e.children.length;e.append(r),i=e.children[t]}return i.dispatchEvent(new Event("mount")),i}function createElement(e){if(!e)return createFragment("");if("string"==typeof e)return createFragment(e);if(Array.isArray(e))return wrapElements(e.map(createElement));let t={},r={};keys(e).forEach((n=>n.startsWith("_")?t[n.substring(1)]=e[n]:r[n]=e[n]));const{tag:n,children:a,...i}=r,c=createFragment(createHTML(n,i));return keys(t).forEach((e=>Array.isArray(t[e])?c.firstChild.addEventListener(e,(r=>t[e].forEach((e=>e(r))))):c.firstChild.addEventListener(e,t[e]))),a&&c.firstChild.append(createElement(a)),c}function wrapElements(e){const t=createFragment("");return t.append(...e),t}function createHTML(e,t){const r=e||"div";return`<${r} ${keys(t).filter((e=>void 0!==t[e])).map((e=>`${e.replace("_","-")}="${t[e]}"`)).join("")}></${r}>`}function createFragment(e){return document.createRange().createContextualFragment(e)}export function keys(e){return[...Object.keys(e||{})]}
+export function useStore(id, initial) {
+  if (!id) return
+  if (!window.FernStore) window.FernStore = {}
+  if (!window.FernStore[id]) window.FernStore[id] = initial ?? {}
+  return window.FernStore[id]
+}
+
+export function render(origin, props) {
+  if (!origin) return
+
+  const created = createElement(props)
+  const id = '#' + created.firstChild?.id
+  const current = id.length > 1 && document.querySelector(id)
+  let newElement = null
+
+  if (current) {
+    current.dispatchEvent(new Event('unmount'))
+    current.parentNode.replaceChild(created, current)
+    newElement = document.querySelector(id)
+  }
+  else {
+    const count = origin.children.length
+    origin.append(created)
+    newElement = origin.children[count]
+  }
+  
+  newElement.dispatchEvent(new Event('mount'))
+  return newElement
+}
+
+function createElement(props) {
+  if (props === undefined) return createFragment('')
+  if (typeof props === 'string' || typeof props === 'number') return createFragment(props)
+  if (Array.isArray(props)) return wrapElements(props.map(createElement))
+
+  let listeners = {}
+  let cleanProps = {}
+  keys(props).forEach(p => p.startsWith('_') ? (listeners[p.substring(1)] = props[p]) : (cleanProps[p] = props[p]))
+  const { tag, children, ...atts } = cleanProps
+
+  const newElement = createFragment(createHTML(tag, atts))
+  keys(listeners).forEach(key => Array.isArray(listeners[key]) 
+    ? newElement.firstChild.addEventListener(key, e => listeners[key].forEach(l => l(e)))
+    : newElement.firstChild.addEventListener(key, listeners[key]))
+  if (children !== undefined) newElement.firstChild.append(createElement(children))
+  return newElement
+}
+
+function wrapElements(elements) {
+  const wrapper = createFragment('')
+  wrapper.append(...elements)
+  return wrapper
+}
+
+function createHTML(tag, atts) {
+  const t = tag || 'div'
+  const attString = (att) => `${att.replace('_', '-')}="${atts[att]}"`
+  const attHTML = keys(atts).filter(key => atts[key] !== undefined).map(attString).join('')
+  return `<${t} ${attHTML}></${t}>`
+}
+
+function createFragment(html) {
+ return document.createRange().createContextualFragment(html)
+}
+
+function keys(obj) {
+  return [...Object.keys(obj || {})]
+}
