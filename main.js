@@ -54,20 +54,18 @@ function getFilters() {
     const { letter, state } = cell
     const row = Math.floor(index / 5)
     const col = index % 5
-    const sameLettersInRow = rows[row]?.filter(c => c.state > 0 && c.letter === letter).length
+    const validCountInRow = rows[row]?.filter(c => c.state > 0 && c.letter === letter).length
 
     if (state > 0)
-      filters.minLetterCount[letter] = sameLettersInRow
+      filters.minLetterCount[letter] = validCountInRow
     else
-      filters.maxLetterCount[letter] = sameLettersInRow
+      filters.maxLetterCount[letter] = validCountInRow
 
     if (state === 2)
       filters.hasLetterAt[col].push(letter)
     else
       filters.notHasLetterAt[col].push(letter)
   })
-
-  console.log(rows, filters)
 
   return filters
 }

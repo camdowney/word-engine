@@ -6,6 +6,7 @@ export function useStore(id, initial) {
 }
 
 export function render(origin, props) {
+  // console.log(props?._click)
   if (!origin) return
 
   const created = createElement(props)
@@ -30,19 +31,19 @@ export function render(origin, props) {
 
 function createElement(props) {
   if (props === undefined) return createFragment('')
-  if (typeof props === 'string' || typeof props === 'number') return createFragment(props)
   if (Array.isArray(props)) return wrapElements(props.map(createElement))
+  if (typeof props !== 'object') return createFragment(props)
 
   let listeners = {}
   let cleanProps = {}
   keys(props).forEach(p => p.startsWith('_') ? (listeners[p.substring(1)] = props[p]) : (cleanProps[p] = props[p]))
-  const { tag, children, ...atts } = cleanProps
+  const { tag, content, ...atts } = cleanProps
 
   const newElement = createFragment(createHTML(tag, atts))
   keys(listeners).forEach(key => Array.isArray(listeners[key]) 
     ? newElement.firstChild.addEventListener(key, e => listeners[key].forEach(l => l(e)))
     : newElement.firstChild.addEventListener(key, listeners[key]))
-  if (children !== undefined) newElement.firstChild.append(createElement(children))
+  if (content !== undefined) newElement.firstChild.append(createElement(content))
   return newElement
 }
 

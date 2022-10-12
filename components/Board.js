@@ -6,11 +6,11 @@ export default function Board(cells = [], updateCellState) {
   return {
     id: 'board',
     _click: updateCellState,
-    children: [...cells, ...emptyCells].map((c, i) => ({
+    content: [...cells, ...emptyCells].map((c, i) => ({
       class: 'cell',
       data_index: i,
       data_state: c?.state,
-      children: c?.letter
+      content: c?.letter
     })),
   }
 }

@@ -6,14 +6,12 @@ export default function Counter() {
   const update = () => {
     store.count++
     render(true, Counter())
+    //R
   }
 
   return {
     id: 'counter',
     _click: update,
-    children: {
-      tag: 'p',
-      children: store.count,
-    },
+    content: `<p>${store.count}</p>`,
   }
 }

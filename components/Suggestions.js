@@ -22,7 +22,7 @@ export default function Suggestions(filters = []) {
   return {
     id: 'suggestions',
     _mount: loadMoreSuggestions,
-    children: [
+    content: [
       `<p class="suggestions-header">Showing ${filteredWords.length} possible words</p>`,
       { id: 'suggestions-list', _scroll: loadMoreSuggestions },
     ],
