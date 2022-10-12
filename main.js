@@ -42,10 +42,10 @@ function updateUI() {
 
 function getFilters() {
   let filters = {
-    notHasLetterAt: [[], [], [], [], []],
-    hasLetterAt: [[], [], [], [], []],
     minLetterCount: {},
     maxLetterCount: {},
+    notHasLetterAt: [[], [], [], [], []],
+    hasLetterAt: [[], [], [], [], []],
   }
 
   const rows = chunk(cells, 5).filter(row => Array.isArray(row))
@@ -54,19 +54,20 @@ function getFilters() {
     const { letter, state } = cell
     const row = Math.floor(index / 5)
     const col = index % 5
+    const sameLettersInRow = rows[row]?.filter(c => c.state > 0 && c.letter === letter).length
 
     if (state > 0)
-      filters.minLetterCount[letter] = filters.minLetterCount[letter] + 1 || 1
+      filters.minLetterCount[letter] = sameLettersInRow
     else
-      filters.maxLetterCount[letter] = rows[row]?.filter(c => c.state > 0 && c.letter === letter).length || 0
+      filters.maxLetterCount[letter] = sameLettersInRow
 
     if (state === 2)
       filters.hasLetterAt[col].push(letter)
-    else if (state === 1)
-      filters.notHasLetterAt[col].push(letter)
     else
       filters.notHasLetterAt[col].push(letter)
   })
+
+  console.log(rows, filters)
 
   return filters
 }
