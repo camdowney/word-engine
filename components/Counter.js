@@ -5,7 +5,6 @@ export default function Counter() {
 
   const update = () => {
     store.count++
-    console.log(arguments.callee.caller.toString())
     render(true, Counter())
   }
 

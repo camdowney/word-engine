@@ -4,7 +4,7 @@ import { fiveLetterWords } from '../dictionary/fiveLetterWords.js'
 import filterWords from '../filterWords.js'
 
 const PAGE_SIZE = 100
-const SCROLL_OFFSET = 1000
+const SCROLL_OFFSET = 600
 
 export default function Suggestions(filters = []) {
   const filteredWords = filterWords(fiveLetterWords, filters)
