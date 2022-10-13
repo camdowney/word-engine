@@ -37,9 +37,9 @@ function createElement(props) {
   let listeners = {}
   let cleanProps = {}
   keys(props).forEach(p => p.startsWith('_') ? (listeners[p.substring(1)] = props[p]) : (cleanProps[p] = props[p]))
-  const { tag, content, ...atts } = cleanProps
+  const { e, content, ...atts } = cleanProps
 
-  const newElement = createFragment(createHTML(tag, atts))
+  const newElement = createFragment(createHTML(e, atts))
   keys(listeners).forEach(key => Array.isArray(listeners[key]) 
     ? newElement.firstChild.addEventListener(key, e => listeners[key].forEach(l => l(e)))
     : newElement.firstChild.addEventListener(key, listeners[key]))
@@ -53,11 +53,11 @@ function wrapElements(elements) {
   return wrapper
 }
 
-function createHTML(tag, atts) {
-  const t = tag || 'div'
-  const attString = (att) => `${att.replace('_', '-')}="${atts[att]}"`
+function createHTML(e, atts) {
+  const tag = e || 'div'
+  const attString = (att) => `${att.replaceAll('_', '-')}="${atts[att]}"`
   const attHTML = keys(atts).filter(key => atts[key] !== undefined).map(attString).join('')
-  return `<${t} ${attHTML}></${t}>`
+  return `<${tag} ${attHTML}></${tag}>`
 }
 
 function createFragment(html) {

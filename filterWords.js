@@ -18,13 +18,15 @@ export default function filterWords(words, filters) {
   if (maxLength)
     filtered = filtered.filter(w => w.length <= maxLength)
 
-  if (minLetterCount)
-    filtered = filtered.filter(w => keys(minLetterCount).filter(key => minLetterCount[key])
-      .every(l => w.split(l).length - 1 >= minLetterCount[l]))
+  if (minLetterCount) {
+    const cleanMin = keys(minLetterCount).filter(key => minLetterCount[key] !== undefined)
+    filtered = filtered.filter(w => cleanMin.every(l => w.split(l).length - 1 >= minLetterCount[l]))
+  }
 
-  if (maxLetterCount)
-    filtered = filtered.filter(w => keys(maxLetterCount).filter(key => maxLetterCount[key])
-      .every(l => w.split(l).length - 1 <= maxLetterCount[l]))
+  if (maxLetterCount) {
+    const cleanMax = keys(maxLetterCount).filter(key => maxLetterCount[key] !== undefined)
+    filtered = filtered.filter(w => cleanMax.every(l => w.split(l).length - 1 <= maxLetterCount[l]))
+  }
 
   if (notHasLetterAt)
     filtered = filtered.filter(w => notHasLetterAt.every((arr, i) => !arr.includes(w.charAt(i))))
