@@ -1,15 +1,15 @@
-export function useStore(id, initial) {
-  if (!id) return
+export function useStore(key, initial) {
+  if (!key) return
   if (!window.FernStore) window.FernStore = {}
-  if (!window.FernStore[id]) window.FernStore[id] = initial ?? {}
-  Object.entries(initial).forEach(([key, value]) => window.FernStore[id][key] = window.FernStore[id][key] ?? value)
-  return window.FernStore[id]
-}
+  if (!window.FernStore[key]) window.FernStore[key] = initial
 
-export function render(origin, props) {
   try { throw new Error }
   catch(e) { console.log(e.stack) }
 
+  return [window.FernStore[key], val => window.FernStore[key] = val]
+}
+
+export function render(origin, props) {
   if (!origin) return
 
   const created = createElement(props)
@@ -39,8 +39,9 @@ function createElement(props, isChild = false) {
 
   let listeners = {}
   let cleanProps = {}
-  Object.entries(props).forEach(([key, value]) => 
-    key.startsWith('_') ? (listeners[key.substring(1)] = value) : (cleanProps[key] = value))
+  Object.entries(props).forEach(([key, value]) => key.startsWith('_') 
+    ? listeners[key.substring(1)] = value 
+    : cleanProps[key] = value)
 
   if (!isChild) {
     cleanProps.data_component_id = useStore('components.index', { index: 0 }).index++
