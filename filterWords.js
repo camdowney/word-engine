@@ -17,13 +17,14 @@ export default function filterWords(words, filters) {
     filtered = filtered.filter(w => w.length <= maxLength)
 
   if (minLetterCount) {
-    const cleanMin = Object.keys(minLetterCount).filter(key => minLetterCount[key] !== undefined)
-    filtered = filtered.filter(w => cleanMin.every(l => w.split(l).length - 1 >= minLetterCount[l]))
+    const cleanMin = Object.entries(minLetterCount).filter(([_, val]) => val !== undefined)
+    console.log(cleanMin)
+    filtered = filtered.filter(w => cleanMin.every(([key, val]) => w.split(key).length - 1 >= val))
   }
 
   if (maxLetterCount) {
-    const cleanMax = Object.keys(maxLetterCount).filter(key => maxLetterCount[key] !== undefined)
-    filtered = filtered.filter(w => cleanMax.every(l => w.split(l).length - 1 <= maxLetterCount[l]))
+    const cleanMax = Object.entries(maxLetterCount).filter(([_, val]) => val !== undefined)
+    filtered = filtered.filter(w => cleanMax.every(([key, val]) => w.split(key).length - 1 <= val))
   }
 
   if (notHasLetterAt)

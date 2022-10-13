@@ -67,11 +67,11 @@ function wrapElements(elements) {
 
 function createHTML(e, atts) {
   const tag = e || 'div'
-  const attString = (att) => `${att.replaceAll('_', '-')}="${atts[att]}"`
-  const attHTML = Object.keys(atts).filter(key => atts[key] !== undefined).map(attString).join('')
+  const attString = ([att, val]) => `${att.replaceAll('_', '-')}="${val}"`
+  const attHTML = Object.entries(atts).filter(([key, val]) => val !== undefined).map(attString).join('')
   return `<${tag} ${attHTML}></${tag}>`
 }
 
 function createFragment(html) {
- return document.createRange().createContextualFragment(html)
+  return document.createRange().createContextualFragment(html)
 }
