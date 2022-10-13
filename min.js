@@ -7,7 +7,9 @@ export function useStore(id, initial) {
 }
 
 export function render(origin, props) {
-  // console.log(props?._click)
+  try { throw new Error }
+  catch(e) { console.log(e.stack) }
+
   if (!origin) return
 
   const created = createElement(props)
@@ -32,13 +34,16 @@ export function render(origin, props) {
 
 function createElement(props, isChild = false) {
   if (props === undefined) return createFragment('')
-  if (Array.isArray(props)) return wrapElements(props.map(p => createElement(p, isChild)))
+  if (Array.isArray(props)) return wrapElements(props.map(p => createElement(p, true)))
   if (typeof props !== 'object') return createFragment(props)
 
   let listeners = {}
   let cleanProps = {}
   keys(props).forEach(p => p.startsWith('_') ? (listeners[p.substring(1)] = props[p]) : (cleanProps[p] = props[p]))
-  if (!isChild) cleanProps.data_component_id = useStore('components.index', { index: 0 }).index++
+
+  if (!isChild) {
+    cleanProps.data_component_id = useStore('components.index', { index: 0 }).index++
+  }
   const { e, content, children, ...atts } = cleanProps
 
   const newElement = createFragment(createHTML(e, atts))
