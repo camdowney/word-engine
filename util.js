@@ -2,15 +2,6 @@ export function isLetter(str) {
   return str && str.length === 1 && str.toLowerCase().match(/[a-z]/)
 }
 
-export function keys(obj) {
-  return [...Object.keys(obj || {})]
-}
-
-export function forNum(num, callback) {
-  if (Number.isNaN(num)) return
-  [...Array(num).keys()].forEach(callback)
-}
-
 export function getPageItems(items, page = 0, pageSize) {
   if (!items) return []
   if (Number.isNaN(page) || page < 0 || page > getNumPages(items, pageSize) - 1) return items

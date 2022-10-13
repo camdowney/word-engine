@@ -1,5 +1,3 @@
-import { keys } from './util.js'
-
 export default function filterWords(words, filters) {
   if (!words || words.length < 1) return []
   if (!filters) return words
@@ -19,12 +17,12 @@ export default function filterWords(words, filters) {
     filtered = filtered.filter(w => w.length <= maxLength)
 
   if (minLetterCount) {
-    const cleanMin = keys(minLetterCount).filter(key => minLetterCount[key] !== undefined)
+    const cleanMin = Object.keys(minLetterCount).filter(key => minLetterCount[key] !== undefined)
     filtered = filtered.filter(w => cleanMin.every(l => w.split(l).length - 1 >= minLetterCount[l]))
   }
 
   if (maxLetterCount) {
-    const cleanMax = keys(maxLetterCount).filter(key => maxLetterCount[key] !== undefined)
+    const cleanMax = Object.keys(maxLetterCount).filter(key => maxLetterCount[key] !== undefined)
     filtered = filtered.filter(w => cleanMax.every(l => w.split(l).length - 1 <= maxLetterCount[l]))
   }
 

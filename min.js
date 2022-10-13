@@ -2,7 +2,7 @@ export function useStore(id, initial) {
   if (!id) return
   if (!window.FernStore) window.FernStore = {}
   if (!window.FernStore[id]) window.FernStore[id] = initial ?? {}
-  keys(initial).forEach(key => window.FernStore[id][key] = window.FernStore[id][key] ?? initial[key])
+  Object.entries(initial).forEach(([key, value]) => window.FernStore[id][key] = window.FernStore[id][key] ?? value)
   return window.FernStore[id]
 }
 
@@ -39,7 +39,8 @@ function createElement(props, isChild = false) {
 
   let listeners = {}
   let cleanProps = {}
-  keys(props).forEach(p => p.startsWith('_') ? (listeners[p.substring(1)] = props[p]) : (cleanProps[p] = props[p]))
+  Object.entries(props).forEach(([key, value]) => 
+    key.startsWith('_') ? (listeners[key.substring(1)] = value) : (cleanProps[key] = value))
 
   if (!isChild) {
     cleanProps.data_component_id = useStore('components.index', { index: 0 }).index++
@@ -48,9 +49,9 @@ function createElement(props, isChild = false) {
 
   const newElement = createFragment(createHTML(e, atts))
 
-  keys(listeners).forEach(key => Array.isArray(listeners[key]) 
-    ? newElement.firstChild.addEventListener(key, e => listeners[key].forEach(l => l(e)))
-    : newElement.firstChild.addEventListener(key, listeners[key]))
+  Object.entries(listeners).forEach(([key, value]) => Array.isArray(value) 
+    ? newElement.firstChild.addEventListener(key, e => value.forEach(l => l(e)))
+    : newElement.firstChild.addEventListener(key, value))
 
   if (typeof content === 'string') newElement.firstChild.append(createFragment(content))
   if (Array.isArray(children)) newElement.firstChild.append(createElement(children, true))
@@ -67,14 +68,10 @@ function wrapElements(elements) {
 function createHTML(e, atts) {
   const tag = e || 'div'
   const attString = (att) => `${att.replaceAll('_', '-')}="${atts[att]}"`
-  const attHTML = keys(atts).filter(key => atts[key] !== undefined).map(attString).join('')
+  const attHTML = Object.keys(atts).filter(key => atts[key] !== undefined).map(attString).join('')
   return `<${tag} ${attHTML}></${tag}>`
 }
 
 function createFragment(html) {
  return document.createRange().createContextualFragment(html)
-}
-
-function keys(obj) {
-  return [...Object.keys(obj || {})]
 }
