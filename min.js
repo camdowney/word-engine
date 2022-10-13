@@ -2,6 +2,7 @@ export function useStore(id, initial) {
   if (!id) return
   if (!window.FernStore) window.FernStore = {}
   if (!window.FernStore[id]) window.FernStore[id] = initial ?? {}
+  keys(initial).forEach(key => window.FernStore[id][key] = window.FernStore[id][key] ?? initial[key])
   return window.FernStore[id]
 }
 
@@ -29,21 +30,26 @@ export function render(origin, props) {
   return newElement
 }
 
-function createElement(props) {
+function createElement(props, isChild = false) {
   if (props === undefined) return createFragment('')
-  if (Array.isArray(props)) return wrapElements(props.map(createElement))
+  if (Array.isArray(props)) return wrapElements(props.map(p => createElement(p, isChild)))
   if (typeof props !== 'object') return createFragment(props)
 
   let listeners = {}
   let cleanProps = {}
   keys(props).forEach(p => p.startsWith('_') ? (listeners[p.substring(1)] = props[p]) : (cleanProps[p] = props[p]))
-  const { e, content, ...atts } = cleanProps
+  if (!isChild) cleanProps.data_component_id = useStore('components.index', { index: 0 }).index++
+  const { e, content, children, ...atts } = cleanProps
 
   const newElement = createFragment(createHTML(e, atts))
+
   keys(listeners).forEach(key => Array.isArray(listeners[key]) 
     ? newElement.firstChild.addEventListener(key, e => listeners[key].forEach(l => l(e)))
     : newElement.firstChild.addEventListener(key, listeners[key]))
-  if (content !== undefined) newElement.firstChild.append(createElement(content))
+
+  if (typeof content === 'string') newElement.firstChild.append(createFragment(content))
+  if (Array.isArray(children)) newElement.firstChild.append(createElement(children, true))
+
   return newElement
 }
 

@@ -6,7 +6,6 @@ export default function Counter() {
   const update = () => {
     store.count++
     render(true, Counter())
-    //R
   }
 
   return {
