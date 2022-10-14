@@ -23,9 +23,15 @@
   const NUM_CELLS = 30
   let cells = []
 
+  function idk(origin, e, args) {
+    render(origin, e(args))
+  }
+
   const app = document.querySelector('main')
   const layout = render(app, { e: 'section', class: 'split' })
   render(layout, Board(cells, updateCellState))
+  idk(layout, Board, [cells, updateCellState])
+  // idk(layout, 'div', {props})
   render(layout, Suggestions())
   render(layout, Counter())
   window.addEventListener('keydown', updateLetters)
