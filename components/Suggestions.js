@@ -13,7 +13,6 @@ export default function Suggestions(filters = []) {
   let currentPage = 0
 
   const loadMoreSuggestions = () => {
-    console.log('called')
     const list = document.querySelector('#suggestions-list')
     if (list.scrollTop < list.scrollHeight - SCROLL_OFFSET) return
     if (currentPage === numPages) return list.removeEventListener('scroll', loadMoreSuggestions)
