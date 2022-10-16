@@ -28,7 +28,7 @@
   }
 
   const app = document.querySelector('main')
-  const layout = render(app, { e: 'section', class: 'split' })
+  const layout = render(app, { t: 'section', class: 'split' })
   render(layout, Board(cells, updateCellState))
   idk(layout, Board, [cells, updateCellState])
   // idk(layout, 'div', {props})

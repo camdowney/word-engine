@@ -11,6 +11,6 @@ export default function Counter() {
   return {
     id: 'counter',
     _click: update,
-    content: `<p>${count}</p>`,
+    c: `<p>${count}</p>`,
   }
 }

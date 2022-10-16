@@ -46,16 +46,16 @@ function createElement(props, isChild = false) {
   if (!isChild) {
     cleanProps.data_component_id = useStore('components.index', { index: 0 }).index++
   }
-  const { e, content, children, ...atts } = cleanProps
+  const { t, c, ...atts } = cleanProps
 
-  const newElement = createFragment(createHTML(e, atts))
+  const newElement = createFragment(createHTML(t, atts))
 
   Object.entries(listeners).forEach(([key, value]) => Array.isArray(value) 
     ? newElement.firstChild.addEventListener(key, e => value.forEach(l => l(e)))
     : newElement.firstChild.addEventListener(key, value))
 
-  if (typeof content === 'string') newElement.firstChild.append(createFragment(content))
-  if (Array.isArray(children)) newElement.firstChild.append(createElement(children, true))
+  if (typeof c === 'string') newElement.firstChild.append(createFragment(c))
+  else if (Array.isArray(c)) newElement.firstChild.append(createElement(c, true))
 
   return newElement
 }
@@ -66,8 +66,8 @@ function wrapElements(elements) {
   return wrapper
 }
 
-function createHTML(e, atts) {
-  const tag = e || 'div'
+function createHTML(t, atts) {
+  const tag = t || 'div'
   const attString = ([att, val]) => `${att.replaceAll('_', '-')}="${val}"`
   const attHTML = Object.entries(atts).filter(([key, val]) => val !== undefined).map(attString).join('')
   return `<${tag} ${attHTML}></${tag}>`
