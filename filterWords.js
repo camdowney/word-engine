@@ -18,7 +18,6 @@ export default function filterWords(words, filters) {
 
   if (minLetterCount) {
     const cleanMin = Object.entries(minLetterCount).filter(([_, val]) => val !== undefined)
-    console.log(cleanMin)
     filtered = filtered.filter(w => cleanMin.every(([key, val]) => w.split(key).length - 1 >= val))
   }
 

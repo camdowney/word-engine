@@ -1,7 +1,7 @@
 import { render, useStore } from '../min.js'
 
 export default function Counter() {
-  let [count, setCount] = useStore('counter', 0)
+  let [count, setCount] = useStore(0, 'counter')
 
   const update = () => {
     setCount(++count)
