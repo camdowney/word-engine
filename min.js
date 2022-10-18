@@ -6,12 +6,12 @@ export function useStore(initial, key) {
   return [window.FernStore[key], val => window.FernStore[key] = val]
 }
 
-export function render(origin, props) {
+export function render(origin, props, curr) {
   if (!origin) return
 
   const created = createElement(props)
   const id = created.firstChild?.id
-  const current = id && document.querySelector(`#${id}`)
+  const current = (id && document.querySelector(`#${id}`)) || curr
   let newElement = null
 
   if (current) {
