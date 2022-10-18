@@ -17,8 +17,7 @@ export function render(origin, props, curr) {
   if (current) {
     const parent = current.parentNode
     const index = Array.prototype.indexOf.call(parent.children, current)
-    current.dispatchEvent(new Event('unmount'))
-    current.querySelectorAll('*').forEach(e => e.dispatchEvent(new Event('unmount')))
+    dispatchAll(current, 'unmount')
     parent.replaceChild(created, current)
     newElement = parent.children[index]
   }
@@ -28,9 +27,13 @@ export function render(origin, props, curr) {
     newElement = origin.children[index]
   }
   
-  newElement.dispatchEvent(new Event('mount'))
-  newElement.querySelectorAll('*').forEach(e => e.dispatchEvent(new Event('mount')))
+  dispatchAll(newElement, 'mount')
   return newElement
+}
+
+function dispatchAll(element, event) {
+  element.dispatchEvent(new Event(event))
+  element.querySelectorAll('*').forEach(e => e.dispatchEvent(new Event(event)))
 }
 
 function createElement(props) {
