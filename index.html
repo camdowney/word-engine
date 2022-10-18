@@ -24,11 +24,13 @@
   let cells = []
 
   const app = document.querySelector('main')
-  const layout = render(app, { t: 'section', class: 'split' , c: [
-    Board(cells, updateCellState),
-    Suggestions(),
-    Counter(),
-  ]})
+  const layout = render(app, 
+    { a: 'section', class: 'split' , c: [
+      { a: Board, cells, updateCellState },
+      { a: Suggestions },
+      { a: Counter },
+    ]}
+  )
   window.addEventListener('keydown', updateLetters)
 
   function updateCellState(e) {
@@ -53,8 +55,8 @@
 
   function updateUI() {
     const filters = getFilters()
-    render(layout, Board(cells, updateCellState))
-    render(layout, Suggestions(filters))
+    render(layout, { a: Board, cells, updateCellState })
+    render(layout, { a: Suggestions, filters })
   }
 
   function getFilters() {

@@ -6,7 +6,7 @@ import filterWords from '../filterWords.js'
 const PAGE_SIZE = 100
 const SCROLL_OFFSET = 600
 
-export default function Suggestions(filters = []) {
+export default function Suggestions({ filters = [] }) {
   const filteredWords = filterWords(fiveLetterWords, filters)
   const allSuggestions = filteredWords.map(w => `<p>${w}</p>`)
   const numPages = getNumPages(allSuggestions, PAGE_SIZE)

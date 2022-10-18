@@ -36,19 +36,22 @@ function createElement(props) {
   if (Array.isArray(props)) return wrapElements(props.map(createElement))
   if (typeof props !== 'object') return createFragment(props)
 
-  let cleanProps = { listeners: {} }
+  const { a, c, ...atts } = props
 
-  Object.entries(props).forEach(([key, value]) => key.startsWith('_') 
-    ? cleanProps.listeners[key.substring(1)] = value 
-    : cleanProps[key] = value)
+  if (typeof a === 'function') return createElement(a({ c, ...atts }))
 
-  const { t, c, listeners, ...atts } = cleanProps
+  let pureAtts = {}
+  let listeners = {}
 
-  const newElement = createFragment(createHTML(t, atts))
+  Object.entries(atts).forEach(([key, value]) => key.startsWith('_') 
+    ? listeners[key.substring(1)] = value 
+    : pureAtts[key] = value)
 
-  Object.entries(listeners).forEach(([e, callback]) => Array.isArray(callback) 
-    ? newElement.firstChild.addEventListener(e, e => callback.forEach(l => l(e)))
-    : newElement.firstChild.addEventListener(e, callback))
+  const newElement = createFragment(createHTML(a, pureAtts))
+
+  Object.entries(listeners).forEach(([event, callback]) => Array.isArray(callback) 
+    ? newElement.firstChild.addEventListener(event, e => callback.forEach(e))
+    : newElement.firstChild.addEventListener(event, callback))
 
   newElement.firstChild.append(createElement(c))
 
@@ -61,8 +64,8 @@ function wrapElements(elements) {
   return wrapper
 }
 
-function createHTML(t, atts) {
-  const tag = t || 'div'
+function createHTML(a, atts) {
+  const tag = a || 'div'
   const attString = ([att, val]) => `${att.replaceAll('_', '-')}="${val}"`
   const attHTML = Object.entries(atts).filter(([_, val]) => val !== undefined).map(attString).join('')
   return `<${tag} ${attHTML}></${tag}>`
