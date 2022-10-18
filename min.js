@@ -15,15 +15,17 @@ export function render(origin, props, curr) {
   let newElement = null
 
   if (current) {
+    const parent = current.parentNode
+    const index = Array.prototype.indexOf.call(parent.children, current)
     current.dispatchEvent(new Event('unmount'))
     current.querySelectorAll('*').forEach(e => e.dispatchEvent(new Event('unmount')))
-    current.parentNode.replaceChild(created, current)
-    newElement = document.querySelector(`#${id}`)
+    parent.replaceChild(created, current)
+    newElement = parent.children[index]
   }
   else {
-    const count = origin.children.length
+    const index = origin.children.length
     origin.append(created)
-    newElement = origin.children[count]
+    newElement = origin.children[index]
   }
   
   newElement.dispatchEvent(new Event('mount'))
