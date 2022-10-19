@@ -5,7 +5,7 @@ export default function Counter() {
 
   const update = () => {
     setCount(++count)
-    render(true, Counter())
+    render(document.querySelector('#counter'), Counter(), true)
   }
 
   return {

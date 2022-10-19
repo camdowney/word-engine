@@ -55,8 +55,8 @@
 
   function updateUI() {
     const filters = getFilters()
-    render(true, { a: Board, cells, updateCellState })
-    render(true, { a: Suggestions, filters })
+    render(document.querySelector('#board'), { a: Board, cells, updateCellState }, true)
+    render(document.querySelector('#suggestions'), { a: Suggestions, filters }, true)
   }
 
   function getFilters() {

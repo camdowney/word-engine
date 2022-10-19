@@ -6,19 +6,17 @@ export function useStore(initial, key) {
   return [window.FernStore[key], val => window.FernStore[key] = val]
 }
 
-export function render(origin, props, curr) {
+export function render(origin, props, rerender) {
   if (!origin) return
 
   const created = createElement(props)
-  const id = created.firstChild?.id
-  const current = (id && document.querySelector(`#${id}`)) || curr
   let newElement = null
 
-  if (current) {
-    const parent = current.parentNode
-    const index = Array.prototype.indexOf.call(parent.children, current)
-    dispatchAll(current, 'unmount')
-    parent.replaceChild(created, current)
+  if (rerender) {
+    const parent = origin.parentNode
+    const index = Array.prototype.indexOf.call(parent.children, origin)
+    dispatchAll(origin, 'unmount')
+    parent.replaceChild(created, origin)
     newElement = parent.children[index]
   }
   else {
