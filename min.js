@@ -6,8 +6,10 @@ export function useStore(initial, key) {
   return [window.FernStore[key], val => window.FernStore[key] = val]
 }
 
-export function render(origin, props, rerender) {
+export function render(origin, props, rerender, isChild) {
   if (!origin) return
+
+  typeof props?.a === 'function' && console.log('component rendered')
 
   const created = createElement(props)
   let newElement = null
@@ -20,12 +22,11 @@ export function render(origin, props, rerender) {
     newElement = parent.children[index]
   }
   else {
-    const index = origin.children.length
     origin.append(created)
-    newElement = origin.children[index]
+    newElement = origin.lastChild
   }
   
-  dispatchAll(newElement, 'mount')
+  if (!isChild) dispatchAll(newElement, 'mount')
   return newElement
 }
 
@@ -56,7 +57,9 @@ function createElement(props) {
     ? newElement.firstChild.addEventListener(event, e => callback.forEach(e))
     : newElement.firstChild.addEventListener(event, callback))
 
-  newElement.firstChild.append(createElement(c))
+  Array.isArray(c)
+    ? c.forEach(child => render(newElement.firstChild, child, false, true))
+    : render(newElement.firstChild, c, false, true)
 
   return newElement
 }
