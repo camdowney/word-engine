@@ -24,8 +24,7 @@
   const NUM_CELLS = 30
   let cells = []
 
-  const app = document.querySelector('main')
-  const layout = render(app, 
+  render('main', 
     { a: 'section', class: 'split' , c: [
       { a: Board, cells, updateCellState },
       { a: Suggestions },

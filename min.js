@@ -42,7 +42,9 @@ export function rerender(id, props) {
   dispatchAll(created, 'mount')
 }
 
-export function render(origin, props, isChild) {
+export function render(parent, props, isChild) {
+  const origin = typeof parent === 'string' ? document?.querySelector(parent) : parent
+  
   if (!origin) return
 
   const isComponent = typeof props?.a === 'function'
