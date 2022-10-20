@@ -3,7 +3,7 @@ export function isLetter(str) {
 }
 
 export function getPageItems(items, page = 0, pageSize) {
-  if (!items) return []
+  if (!Array.isArray(items)) return []
   if (Number.isNaN(page) || page < 0) return items
   if (page > getNumPages(items, pageSize) - 1) return []
   return items.slice((page * pageSize), (page + 1) * pageSize)
@@ -16,6 +16,6 @@ export function getNumPages(items, pageSize) {
 
 export function chunk(arr, size) {
   if (!Array.isArray(arr)) return []
-  if (!size || size < 1) return arr
+  if (!size || size < 1 || size > arr.length) return arr
   return arr.reduce((acc, _, i) => (i % size) ? acc : [...acc, arr.slice(i, i + size)], [])
 }
