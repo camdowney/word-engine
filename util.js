@@ -4,7 +4,8 @@ export function isLetter(str) {
 
 export function getPageItems(items, page = 0, pageSize) {
   if (!items) return []
-  if (Number.isNaN(page) || page < 0 || page > getNumPages(items, pageSize) - 1) return items
+  if (Number.isNaN(page) || page < 0) return items
+  if (page > getNumPages(items, pageSize) - 1) return []
   return items.slice((page * pageSize), (page + 1) * pageSize)
 }
 

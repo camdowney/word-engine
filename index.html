@@ -68,7 +68,7 @@
       hasLetterAt: [[], [], [], [], []],
     }
 
-    const rows = chunk(cells, 5).filter(row => Array.isArray(row))
+    const rows = chunk(cells, 5)
     
     cells.forEach((cell, index) => {
       const { letter, state } = cell
