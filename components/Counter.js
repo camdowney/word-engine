@@ -1,16 +1,11 @@
-import { render, useStore } from '../min.js'
+import { useStore } from '../min.js'
 
 export default function Counter() {
-  let [count, setCount] = useStore(0)
-  let [count2, setCount2] = useStore(0)
-
-  const update = () => {
-    setCount(++count)
-  }
+  const [count, setCount] = useStore(0)
 
   return {
     id: 'counter',
-    _click: update,
+    _click: () => setCount(count + 1),
     c: `<p>${count}</p>`,
   }
 }

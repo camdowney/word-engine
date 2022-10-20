@@ -15,7 +15,7 @@
 </html>
 
 <script type='module'>
-  import { render } from './min.js'
+  import { render, rerender } from './min.js'
   import { isLetter, chunk } from './util.js'
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
@@ -56,8 +56,8 @@
 
   function updateUI() {
     const filters = getFilters()
-    render(document.querySelector('#board'), { a: Board, cells, updateCellState }, true)
-    render(document.querySelector('#suggestions'), { a: Suggestions, filters }, true)
+    rerender(0, { a: Board, cells, updateCellState })
+    rerender(1, { a: Suggestions, filters })
   }
 
   function getFilters() {

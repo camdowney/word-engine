@@ -5,29 +5,35 @@ let currentID = 0
 let nextID = 0
 let storeID = 0
 
-export function useStore(initial, key) {
+export function useStore(initial, publicKey) {
   const props = currentProps
-  const cid = currentID
-
-  if (!key) key = `${cid}-${storeID++}`
+  const id = publicKey?.split('.')[0] || currentID
+  const key = publicKey || `${id}-${storeID++}`
 
   if (!store[key]) store[key] = initial
 
   const setStore = value => {
     store[key] = value
-
-    console.log(store)
-    console.log(cid, componentMap)
-
-    render(componentMap[cid], props, true, false, cid)
-
-    // add ability to rerender component by id
+    rerender(id, props)
   }
 
   return [store[key], setStore]
 }
 
-export function render(origin, props, rerender, isChild, cid) {
+export function rerender(id, props) {
+  const origin = typeof id === 'string' ? document.querySelector(id) : componentMap[id]
+
+  storeID = 0
+
+  const parent = origin.parentNode
+  const index = Array.prototype.indexOf.call(parent.children, origin)
+  dispatchAll(origin, 'unmount')
+  parent.replaceChild(createElement(props), origin)
+  componentMap[id] = parent.children[index]
+  dispatchAll(componentMap[id], 'mount')
+}
+
+export function render(origin, props, isChild) {
   if (!origin) return
 
   const isComponent = typeof props?.a === 'function'
@@ -35,32 +41,19 @@ export function render(origin, props, rerender, isChild, cid) {
   if (isComponent) {
     currentProps = props
     storeID = 0
-    currentID = cid || nextID
+    currentID = nextID
   }
 
-  const created = createElement(props)
   let newElement = null
 
-  if (rerender) {
-    const parent = origin.parentNode
-    const index = Array.prototype.indexOf.call(parent.children, origin)
-    dispatchAll(origin, 'unmount')
-    parent.replaceChild(created, origin)
-    newElement = parent.children[index]
-  }
-  else {
-    origin.append(created)
-    newElement = origin.lastChild
-  }
+  origin.append(createElement(props))
+  newElement = origin.lastChild
 
   if (isComponent) {
-    componentMap[cid || nextID] = newElement
-  }
-
-  if (!rerender && isComponent) {
+    componentMap[currentID] = newElement
     nextID++
   }
-  
+
   if (!isChild) dispatchAll(newElement, 'mount')
   return newElement
 }
@@ -93,8 +86,8 @@ function createElement(props) {
     : newElement.firstChild.addEventListener(event, callback))
 
   Array.isArray(c)
-    ? c.forEach(child => render(newElement.firstChild, child, false, true))
-    : render(newElement.firstChild, c, false, true)
+    ? c.forEach(child => render(newElement.firstChild, child, true))
+    : render(newElement.firstChild, c, true)
 
   return newElement
 }
