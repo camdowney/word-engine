@@ -14,7 +14,7 @@ export function getNumPages(items, pageSize) {
 }
 
 export function chunk(arr, size) {
-  if (!arr) return []
-  if (!size || arr.length < size) return arr
-  return [arr.slice(0, size), ...chunk(arr.slice(size), size)]
+  if (!Array.isArray(arr)) return []
+  if (!size || size < 1) return arr
+  return arr.reduce((acc, _, i) => (i % size) ? acc : [...acc, arr.slice(i, i + size)], [])
 }
