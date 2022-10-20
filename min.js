@@ -1,3 +1,4 @@
+let store = {}
 let componentMap = {}
 let currentProps = {}
 let currentID = 0
@@ -10,20 +11,20 @@ export function useStore(initial, key) {
 
   if (!key) key = `${cid}-${storeID++}`
 
-  if (!window.FernStore) window.FernStore = {}
-  if (!window.FernStore[key]) window.FernStore[key] = initial
+  if (!store[key]) store[key] = initial
 
   const setStore = value => {
-    window.FernStore[key] = value
+    store[key] = value
 
-    console.log(window.FernStore, componentMap, cid)
+    console.log(store)
+    console.log(cid, componentMap)
 
     render(componentMap[cid], props, true, false, cid)
 
     // add ability to rerender component by id
   }
 
-  return [window.FernStore[key], setStore]
+  return [store[key], setStore]
 }
 
 export function render(origin, props, rerender, isChild, cid) {
