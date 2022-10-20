@@ -35,14 +35,7 @@ export function render(origin, props, rerender, isChild, cid) {
   if (isComponent) {
     currentProps = props
     storeID = 0
-  }
-
-  if (!rerender && isComponent) {
-    currentID = nextID
-  }
-
-  if (rerender && isComponent) {
-    currentID = cid
+    currentID = cid || nextID
   }
 
   const created = createElement(props)
