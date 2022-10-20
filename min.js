@@ -1,15 +1,48 @@
+let componentMap = {}
+let currentProps = {}
+let currentID = 0
+let nextID = 0
+let storeID = 0
+
 export function useStore(initial, key) {
-  if (!key) return
+  const props = currentProps
+  const cid = currentID
+
+  if (!key) key = `${cid}-${storeID++}`
+
   if (!window.FernStore) window.FernStore = {}
   if (!window.FernStore[key]) window.FernStore[key] = initial
 
-  return [window.FernStore[key], val => window.FernStore[key] = val]
+  const setStore = value => {
+    window.FernStore[key] = value
+
+    console.log(window.FernStore, componentMap, cid)
+
+    render(componentMap[cid], props, true, false, cid)
+
+    // add ability to rerender component by id
+  }
+
+  return [window.FernStore[key], setStore]
 }
 
-export function render(origin, props, rerender, isChild) {
+export function render(origin, props, rerender, isChild, cid) {
   if (!origin) return
 
-  typeof props?.a === 'function' && console.log('component rendered')
+  const isComponent = typeof props?.a === 'function'
+
+  if (isComponent) {
+    currentProps = props
+    storeID = 0
+  }
+
+  if (!rerender && isComponent) {
+    currentID = nextID
+  }
+
+  if (rerender && isComponent) {
+    currentID = cid
+  }
 
   const created = createElement(props)
   let newElement = null
@@ -24,6 +57,14 @@ export function render(origin, props, rerender, isChild) {
   else {
     origin.append(created)
     newElement = origin.lastChild
+  }
+
+  if (isComponent) {
+    componentMap[cid || nextID] = newElement
+  }
+
+  if (!rerender && isComponent) {
+    nextID++
   }
   
   if (!isChild) dispatchAll(newElement, 'mount')
