@@ -1,3 +1,10 @@
+/*
+  Rules:
+  * For useStore(), publicKey is optional, but if used, must
+    be in the format 'id.variable'. id must refer to a
+    component's id (not just a regular dom element).
+*/
+
 let store = {}
 let componentMap = {}
 let currentProps = {}
@@ -14,6 +21,7 @@ export function useStore(initial, publicKey) {
 
   const setStore = value => {
     store[key] = value
+    storeID = 0
     rerender(id, props)
   }
 
@@ -21,16 +29,17 @@ export function useStore(initial, publicKey) {
 }
 
 export function rerender(id, props) {
+  storeID = 0 // remove this once export is no longer needed
+
   const origin = typeof id === 'string' ? document.querySelector(id) : componentMap[id]
-
-  storeID = 0
-
   const parent = origin.parentNode
   const index = Array.prototype.indexOf.call(parent.children, origin)
+  
   dispatchAll(origin, 'unmount')
   parent.replaceChild(createElement(props), origin)
-  componentMap[id] = parent.children[index]
-  dispatchAll(componentMap[id], 'mount')
+  const created = parent.children[index]
+  componentMap[id] = created
+  dispatchAll(created, 'mount')
 }
 
 export function render(origin, props, isChild) {
@@ -44,18 +53,16 @@ export function render(origin, props, isChild) {
     currentID = nextID
   }
 
-  let newElement = null
-
   origin.append(createElement(props))
-  newElement = origin.lastChild
+  const created = origin.lastChild
 
   if (isComponent) {
-    componentMap[currentID] = newElement
+    componentMap[currentID] = created
     nextID++
   }
 
-  if (!isChild) dispatchAll(newElement, 'mount')
-  return newElement
+  if (!isChild) dispatchAll(created, 'mount')
+  return created
 }
 
 function dispatchAll(element, event) {
@@ -79,17 +86,21 @@ function createElement(props) {
     ? listeners[key.substring(1)] = value 
     : pureAtts[key] = value)
 
-  const newElement = createFragment(createHTML(a, pureAtts))
+  const created = createFragment(createHTML(a, pureAtts))
+
+  if (!listeners) return created
 
   Object.entries(listeners).forEach(([event, callback]) => Array.isArray(callback) 
-    ? newElement.firstChild.addEventListener(event, e => callback.forEach(e))
-    : newElement.firstChild.addEventListener(event, callback))
+    ? created.firstChild.addEventListener(event, e => callback.forEach(e))
+    : created.firstChild.addEventListener(event, callback))
+
+  if (!c) return created
 
   Array.isArray(c)
-    ? c.forEach(child => render(newElement.firstChild, child, true))
-    : render(newElement.firstChild, c, true)
+    ? c.forEach(child => render(created.firstChild, child, true))
+    : render(created.firstChild, c, true)
 
-  return newElement
+  return created
 }
 
 function wrapElements(elements) {
