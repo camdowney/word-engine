@@ -8,20 +8,19 @@
 let store = {}
 let components = []
 let storeID = 0
-let currentID = null
+let currentID = 0
 
 export function useStore(initial, publicKey) {
-  const elementID = publicKey?.split('.')[0]
-  const componentID = (publicKey && components.find((c => c.id === elementID))) || currentID
-  const key = publicKey || `${componentID}-${storeID++}`
+  const cid = currentID
+  const key = `${cid}-${storeID++}`
 
   if (!store[key]) store[key] = initial
 
   const setStore = value => {
     store[key] = value
     
-    const { e, props } = components[componentID]
-    currentID = componentID
+    const { e, props } = components[cid]
+    currentID = cid
   
     e.dispatchEvent(new Event('unmount'))
     e.querySelectorAll('*').forEach(c => c.dispatchEvent(new Event('unmount')))
@@ -61,11 +60,10 @@ export function render(element, props, replace) {
     created = origin.lastChild
   }
 
-  if (isComponent) {
-    components[currentID++] = { id: created?.id, e: created, props }
-  }
+  if (isComponent) components[currentID++] = { e: created, props }
 
   if (c) render(created, c)
+  
   created.dispatchEvent(new Event('mount'))
   return created
 }
