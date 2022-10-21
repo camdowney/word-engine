@@ -12,40 +12,35 @@ let currentID = null
 
 export function useStore(initial, publicKey) {
   const elementID = publicKey?.split('.')[0]
-
-  const id = (publicKey && components.find((c => c.id === elementID))) || currentID
-
-  const key = publicKey || `${id}-${storeID++}`
+  const componentID = (publicKey && components.find((c => c.id === elementID))) || currentID
+  const key = publicKey || `${componentID}-${storeID++}`
 
   if (!store[key]) store[key] = initial
 
   const setStore = value => {
     store[key] = value
-    rerender(id)
+    
+    const { e, props } = components[componentID]
+    currentID = componentID
+  
+    e.dispatchEvent(new Event('unmount'))
+    e.querySelectorAll('*').forEach(c => c.dispatchEvent(new Event('unmount')))
+    render(e, props, true)
+  
+    currentID = components.length
   }
 
   return [store[key], setStore]
 }
 
-export function rerender(cid) {
-  const { e, props } = components[cid]
+export function render(element, props, replace) {
+  if (!element) return
 
-  currentID = cid
-  
-  dispatchAll(e, 'unmount')
-  render(e, props, false, true)
-
-  currentID = components.length
-}
-
-export function render(parent, props, isChild, replace) {
-  if (!parent) return
-
-  const origin = typeof parent === 'string' ? document?.querySelector(parent) : parent
+  const origin = typeof element === 'string' ? document?.querySelector(element) : element
 
   if (props === undefined) return origin.append(createFragment(''))
   if (typeof props === 'string') return origin.append(createFragment(props))
-  if (Array.isArray(props)) return props.forEach(p => render(origin, p, true))
+  if (Array.isArray(props)) return props.forEach(p => render(origin, p))
 
   const { a, ...rest } = props
 
@@ -58,46 +53,39 @@ export function render(parent, props, isChild, replace) {
   let created = null
 
   if (replace) {
-    const parent2 = parent.parentNode
-    const index = [...parent2.children].indexOf(parent)
-    parent2.replaceChild(createElement(atts), parent)
-    created = parent2.children[index]
+    const parent = origin.parentNode
+    const index = [...parent.children].indexOf(origin)
+    parent.replaceChild(createElement(atts), origin)
+    created = parent.children[index]
   }
   else {
     origin.append(createElement(atts))
     created = origin.lastChild
   }
 
-  
-
   if (isComponent) {
     components[currentID++] = { id: created?.id, e: created, props }
   }
 
-  if (c) render(created, c, true)
-
-  if (!isChild) console.log(components)
-
-  if (!isChild) dispatchAll(created, 'mount')
+  if (c) render(created, c)
+  created.dispatchEvent(new Event('mount'))
   return created
 }
 
-function dispatchAll(element, event) {
-  element.dispatchEvent(new Event(event))
-  element.querySelectorAll('*').forEach(e => e.dispatchEvent(new Event(event)))
-}
-
 function createElement(props) {
-  const { a, ...atts } = props
+  const { a, ...attsAndListeners } = props
 
-  let pureAtts = {}
+  let atts = {}
   let listeners = {}
 
-  Object.entries(atts).forEach(([key, value]) => key.startsWith('_') 
+  Object.entries(attsAndListeners).forEach(([key, value]) => key.startsWith('_') 
     ? listeners[key.substring(1)] = value 
-    : pureAtts[key] = value)
+    : atts[key] = value)
 
-  const created = createFragment(createHTML(a, pureAtts))
+  const tag = a || 'div'
+  const att = ([key, value]) => `${key.replaceAll('_', '-')}="${value}"`
+  const attHTML = Object.entries(atts).filter(([_, val]) => val !== undefined).map(att).join('')
+  const created = createFragment(`<${tag} ${attHTML}></${tag}>`)
 
   if (!listeners) return created
 
@@ -106,13 +94,6 @@ function createElement(props) {
     : created.firstChild.addEventListener(event, callback))
 
   return created
-}
-
-function createHTML(a, atts) {
-  const tag = a || 'div'
-  const attString = ([att, val]) => `${att.replaceAll('_', '-')}="${val}"`
-  const attHTML = Object.entries(atts).filter(([_, val]) => val !== undefined).map(attString).join('')
-  return `<${tag} ${attHTML}></${tag}>`
 }
 
 function createFragment(html) {
