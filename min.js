@@ -13,7 +13,7 @@ let currentID = null
 export function useStore(initial, publicKey) {
   const elementID = publicKey?.split('.')[0]
 
-  const id = (publicKey && components.find((c => c.id === elementID))) || components.length
+  const id = (publicKey && components.find((c => c.id === elementID))) || currentID
 
   const key = publicKey || `${id}-${storeID++}`
 
@@ -27,13 +27,13 @@ export function useStore(initial, publicKey) {
   return [store[key], setStore]
 }
 
-export function rerender(id) {
-  const origin = components[id]
+export function rerender(cid) {
+  const { id, e: origin, props } = components[cid]
   const parent = origin.parentNode
-  const index = Array.prototype.indexOf.call(parent.children, origin)
+  const index = [...parent.children].indexOf(origin)
 
   storeID = 0
-  currentID = components.length
+  currentID = cid
   
   dispatchAll(origin, 'unmount')
   parent.replaceChild(createElement(props), origin)
@@ -41,37 +41,34 @@ export function rerender(id) {
   components[id] = created
   dispatchAll(created, 'mount')
 
-  nextID = temp
+  currentID = components.length
 }
 
 export function render(parent, props, isChild) {
+  if (!parent) return
+
   const origin = typeof parent === 'string' ? document?.querySelector(parent) : parent
 
-  if (!origin) return
+  if (props === undefined) return origin.append(createFragment(''))
+  if (typeof props === 'string') return origin.append(createFragment(props))
+  if (Array.isArray(props)) return props.forEach(p => render(origin, p, true))
 
-  const isComponent = typeof props?.a === 'function'
+  const { a, ...rest } = props
 
-  const temp = components.length
+  const isComponent = typeof a === 'function'
 
-  if (isComponent) {
-    storeID = 0
-    components.push({ props })
-  }
+  if (isComponent) storeID = 0
 
-  origin.append(createElement(props))
+  const { c, ...atts } = isComponent ? a(rest) : props
+
+  origin.append(createElement(atts))
   const created = origin.lastChild
 
   if (isComponent) {
-    components[temp] = { id: created?.id, e: created, ...components[temp] }
+    components[currentID++] = { id: created?.id, e: created, props }
   }
 
-  const c = props?.c
-
-  if (c) {
-    Array.isArray(c)
-      ? c.forEach(child => render(created, child, true))
-      : render(created, c, true)
-  }
+  if (c) render(created, c, true)
 
   if (!isChild) console.log(components)
 
@@ -85,12 +82,7 @@ function dispatchAll(element, event) {
 }
 
 function createElement(props) {
-  if (props === undefined) return createFragment('')
-  if (Array.isArray(props)) return wrapElements(props.map(createElement))
-  if (typeof props !== 'object') return createFragment(props)
-
   const { a, ...atts } = props
-  if (typeof a === 'function') return createElement(a(atts))
 
   let pureAtts = {}
   let listeners = {}
@@ -108,12 +100,6 @@ function createElement(props) {
     : created.firstChild.addEventListener(event, callback))
 
   return created
-}
-
-function wrapElements(elements) {
-  const wrapper = createFragment('')
-  wrapper.append(...elements)
-  return wrapper
 }
 
 function createHTML(a, atts) {
