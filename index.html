@@ -28,7 +28,7 @@
   render('main', 
     { a: 'section', class: 'split' , c: [
       { a: Board, cells, updateCellState },
-      { a: Suggestions },
+      { a: Suggestions, getFilters },
       { a: Counter },
     ]}
   )

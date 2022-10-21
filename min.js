@@ -28,23 +28,17 @@ export function useStore(initial, publicKey) {
 }
 
 export function rerender(cid) {
-  const { id, e: origin, props } = components[cid]
-  const parent = origin.parentNode
-  const index = [...parent.children].indexOf(origin)
+  const { e, props } = components[cid]
 
-  storeID = 0
   currentID = cid
   
-  dispatchAll(origin, 'unmount')
-  parent.replaceChild(createElement(props), origin)
-  const created = parent.children[index]
-  components[id] = created
-  dispatchAll(created, 'mount')
+  dispatchAll(e, 'unmount')
+  render(e, props, false, true)
 
   currentID = components.length
 }
 
-export function render(parent, props, isChild) {
+export function render(parent, props, isChild, replace) {
   if (!parent) return
 
   const origin = typeof parent === 'string' ? document?.querySelector(parent) : parent
@@ -61,8 +55,20 @@ export function render(parent, props, isChild) {
 
   const { c, ...atts } = isComponent ? a(rest) : props
 
-  origin.append(createElement(atts))
-  const created = origin.lastChild
+  let created = null
+
+  if (replace) {
+    const parent2 = parent.parentNode
+    const index = [...parent2.children].indexOf(parent)
+    parent2.replaceChild(createElement(atts), parent)
+    created = parent2.children[index]
+  }
+  else {
+    origin.append(createElement(atts))
+    created = origin.lastChild
+  }
+
+  
 
   if (isComponent) {
     components[currentID++] = { id: created?.id, e: created, props }
