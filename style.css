@@ -63,11 +63,11 @@ main {
   cursor: pointer;
 }
 
-.cell[data-state="1"] {
+.cell[data-state='1'] {
   background-color: var(--yellow-500);
 }
 
-.cell[data-state="2"] {
+.cell[data-state='2'] {
   background-color: var(--green-500);
 }
 

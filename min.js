@@ -13,6 +13,7 @@ let nextID = 0
 let storeID = 0
 
 export function useStore(initial, publicKey) {
+  // TODO: if publicKey, props = componentMap with matching id
   const props = currentProps
   const id = publicKey?.split('.')[0] || currentID
   const key = publicKey || `${id}-${storeID++}`
@@ -44,7 +45,7 @@ export function rerender(id, props) {
 
 export function render(parent, props, isChild) {
   const origin = typeof parent === 'string' ? document?.querySelector(parent) : parent
-  
+
   if (!origin) return
 
   const isComponent = typeof props?.a === 'function'

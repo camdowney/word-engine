@@ -15,7 +15,7 @@
 </html>
 
 <script type='module'>
-  import { render, rerender } from './min.js'
+  import { render, rerender, useStore } from './min.js'
   import { isLetter, chunk } from './util.js'
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
@@ -23,6 +23,7 @@
 
   const NUM_CELLS = 30
   let cells = []
+  // const [cells, setCells] = useStore([], 'cells')
 
   render('main', 
     { a: 'section', class: 'split' , c: [
