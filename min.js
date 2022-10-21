@@ -43,13 +43,11 @@ export function render(element, props, replace) {
   if (Array.isArray(props)) return props.forEach(p => render(origin, p))
 
   const { a, ...rest } = props
-
   const isComponent = typeof a === 'function'
 
   if (isComponent) storeID = 0
 
   const { c, ...atts } = isComponent ? a(rest) : props
-
   let created = null
 
   if (replace) {
