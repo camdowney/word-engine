@@ -1,14 +1,7 @@
-/*
-  Rules:
-  * For useStore(), publicKey is optional, but if used, must
-    be in the format 'id.variable'. id must refer to a
-    component's id (not just a regular dom element).
-*/
-
 let store = {}
 let components = []
-let storeID = 0
 let currentID = 0
+let storeID = 0
 
 export function useStore(initial, publicKey) {
   const cid = currentID
@@ -63,7 +56,7 @@ export function render(element, props, replace) {
   if (isComponent) components[currentID++] = { e: created, props }
 
   if (c) render(created, c)
-  
+
   created.dispatchEvent(new Event('mount'))
   return created
 }
