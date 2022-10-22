@@ -21,7 +21,21 @@
   import Suggestions from './components/Suggestions.js'
   import Counter from './components/Counter.js'
 
-  render('main', { a: Layout })
+  const start = performance.now()
+
+  render('main', [{ a: Layout }, { a: Test }])
+
+  console.log(performance.now() - start)
+
+  function Test() {
+    return {
+      class: 'test-wrapper',
+      c: [...Array(10000)].map((_, i) => ({
+        class: 'test',
+        _click: () => console.log(i),
+      })),
+    }
+  }
 
   const NUM_CELLS = 30
 

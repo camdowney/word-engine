@@ -99,6 +99,18 @@ main {
   margin-top: 0.5rem;
 }
 
+.test-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.test {
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--gray-100);
+}
+
 @media (min-width: 992px) {
   main {
     padding: 5rem 0;
