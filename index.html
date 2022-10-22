@@ -48,11 +48,8 @@
       }
     }
 
-    const onMount = () => window.addEventListener('keydown', updateLetters)
-    const onUnmount = () => window.removeEventListener('keydown', updateLetters)
-
     return { 
-      a: 'section', class: 'split', _mount: onMount, _unmount: onUnmount, c: [
+      a: 'section', class: 'split', __keydown: updateLetters, c: [
         { a: Board, cells, updateCellState },
         { a: Suggestions, filters: getFilters(cells) },
         { a: Counter },

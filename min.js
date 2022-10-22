@@ -62,13 +62,15 @@ export function render(element, props, replace) {
 }
 
 function createElement(props) {
-  const { a, ...attsAndListeners } = props
+  const { a, ...all } = props
 
-  let atts = {}
+  let effects = {}
   let listeners = {}
+  let atts = {}
 
-  Object.entries(attsAndListeners).forEach(([key, value]) => key.startsWith('_') 
-    ? listeners[key.substring(1)] = value 
+  Object.entries(all).forEach(([key, value]) => 
+    key.startsWith('__') ? effects[key.substring(2)] = value 
+    : key.startsWith('_') ? listeners[key.substring(1)] = value 
     : atts[key] = value)
 
   const tag = a || 'div'
@@ -76,10 +78,24 @@ function createElement(props) {
   const attHTML = Object.entries(atts).filter(([_, val]) => val !== undefined).map(att).join('')
   const created = createFragment(`<${tag} ${attHTML}></${tag}>`)
 
-  if (!listeners) return created
+  if (Object.keys(effects).length > 0) {
+    const toArray = value => !value ? [] : Array.isArray(value) ? value : [value]
+
+    listeners.mount = toArray(listeners.mount)
+    listeners.unmount = toArray(listeners.unmount)
+
+    Object.entries(effects).forEach(([event, callback]) => {
+      listeners.mount.push(() => window.addEventListener(event, callback))
+      listeners.unmount.push(() => window.removeEventListener(event, callback))
+    })
+  }
+
+  if (Object.keys(listeners).length < 1) return created
+
+  console.log(listeners)
 
   Object.entries(listeners).forEach(([event, callback]) => Array.isArray(callback) 
-    ? created.firstChild.addEventListener(event, e => callback.forEach(e))
+    ? created.firstChild.addEventListener(event, e => callback.forEach(c => c(e)))
     : created.firstChild.addEventListener(event, callback))
 
   return created
