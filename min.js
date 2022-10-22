@@ -34,12 +34,12 @@ export function render(element, props, replace) {
   if (typeof props === 'string') return origin.append(createFragment(props))
   if (Array.isArray(props)) return props.forEach(p => render(origin, p))
 
-  const { a, ...rest } = props
-  const isComponent = typeof a === 'function'
+  const { a: as, ...rest } = props
+  const isComponent = typeof as === 'function'
 
   if (isComponent) storeID = 0
 
-  const { c, ...atts } = isComponent ? a(rest) : props
+  const { c: children, ...atts } = isComponent ? as(rest) : props
   let created = null
 
   if (replace) {
@@ -54,8 +54,7 @@ export function render(element, props, replace) {
   }
 
   if (isComponent) components[currentID++] = { e: created, props }
-
-  if (c) render(created, c)
+  if (children) render(created, children)
 
   created.dispatchEvent(new Event('mount'))
   return created
@@ -68,35 +67,22 @@ function createElement(props) {
   let listeners = {}
   let atts = {}
 
-  Object.entries(all).forEach(([key, value]) => 
-    key.startsWith('__') ? effects[key.substring(2)] = value 
-    : key.startsWith('_') ? listeners[key.substring(1)] = value 
-    : atts[key] = value)
+  Object.entries(all).forEach(([key, value]) => key.startsWith('__') ? effects[key.substring(2)] = value 
+    : key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
 
   const tag = a || 'div'
-  const att = ([key, value]) => `${key.replaceAll('_', '-')}="${value}"`
-  const attHTML = Object.entries(atts).filter(([_, val]) => val !== undefined).map(att).join('')
-  const created = createFragment(`<${tag} ${attHTML}></${tag}>`)
+  const attHTML = ([key, value]) => `${key.replaceAll('_', '-')}="${value}"`
+  const attsHTML = Object.entries(atts).filter(([_, value]) => value !== undefined).map(attHTML).join('')
+  const created = createFragment(`<${tag} ${attsHTML}></${tag}>`)
 
-  if (Object.keys(effects).length > 0) {
-    const toArray = value => !value ? [] : Array.isArray(value) ? value : [value]
+  const addEvent = ([e, f]) => created.firstChild.addEventListener(e, f)
 
-    listeners.mount = toArray(listeners.mount)
-    listeners.unmount = toArray(listeners.unmount)
+  Object.entries(effects).forEach(([e, f]) => {
+    addEvent(['mount', () => window.addEventListener(e, f)])
+    addEvent(['unmount', () => window.removeEventListener(e, f)])
+  })
 
-    Object.entries(effects).forEach(([event, callback]) => {
-      listeners.mount.push(() => window.addEventListener(event, callback))
-      listeners.unmount.push(() => window.removeEventListener(event, callback))
-    })
-  }
-
-  if (Object.keys(listeners).length < 1) return created
-
-  console.log(listeners)
-
-  Object.entries(listeners).forEach(([event, callback]) => Array.isArray(callback) 
-    ? created.firstChild.addEventListener(event, e => callback.forEach(c => c(e)))
-    : created.firstChild.addEventListener(event, callback))
+  Object.entries(listeners).forEach(addEvent)
 
   return created
 }
