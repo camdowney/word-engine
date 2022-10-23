@@ -3,6 +3,8 @@ let components = []
 let currentID = 0
 let storeID = 0
 
+const createFragment = html => document.createRange().createContextualFragment(html)
+
 export function store(initial) {
   const cid = currentID
   const key = `${cid}-${storeID++}`
@@ -85,8 +87,4 @@ function createElement(props) {
   Object.entries(listeners).forEach(addEvent)
 
   return created
-}
-
-function createFragment(html) {
-  return document.createRange().createContextualFragment(html)
 }
