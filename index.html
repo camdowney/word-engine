@@ -15,7 +15,7 @@
 </html>
 
 <script type='module'>
-  import { render, useStore } from './min.js'
+  import { render, store } from './min.js'
   import { isLetter, chunk } from './lib/util.js'
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
@@ -23,8 +23,8 @@
 
   const NUM_CELLS = 30
 
-  render('main', { a: () => {
-    const [cells, setCells] = useStore([])
+  render('main', { r: () => {
+    const [cells, setCells] = store([])
 
     const updateLetters = e => {
       const key = e.key.toLowerCase()
@@ -49,10 +49,10 @@
     }
 
     return { 
-      a: 'section', class: 'split', __keydown: updateLetters, c: [
-        { a: Board, cells, updateCellState },
-        { a: Suggestions, cells },
-        { a: Counter },
+      r: 'section', class: 'split', __keydown: updateLetters, c: [
+        { r: Board, cells, updateCellState },
+        { r: Suggestions, cells },
+        { r: Counter },
       ]
     }
   }})
