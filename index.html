@@ -16,41 +16,15 @@
 
 <script type='module'>
   import { render, useStore } from './min.js'
-  import { isLetter, chunk } from './util.js'
+  import { isLetter, chunk } from './lib/util.js'
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
   import Counter from './components/Counter.js'
 
-  const start = performance.now()
-
-  render('main', [{ a: Layout }, { a: Test }])
-
-  console.log(performance.now() - start)
-
-  function Test() {
-    return {
-      class: 'test-wrapper',
-      c: [...Array(10000)].map((_, i) => ({
-        class: 'test',
-        _click: () => console.log(i),
-      })),
-    }
-  }
-
   const NUM_CELLS = 30
 
-  function Layout() {
+  render('main', { a: () => {
     const [cells, setCells] = useStore([])
-
-    const updateCellState = e => {
-      const index = e.srcElement.dataset.index
-      
-      if (!cells[index]) return
-
-      let copy = cells
-      copy[index].state = (copy[index].state + 1) % 3
-      setCells(copy)
-    }
 
     const updateLetters = e => {
       const key = e.key.toLowerCase()
@@ -63,42 +37,23 @@
       }
     }
 
+    const updateCellState = e => {
+      const index = e.srcElement.dataset.index
+      
+      if (!cells[index]) return
+
+      let copy = cells
+      copy[index].state = (copy[index].state + 1) % 3
+      
+      setCells(copy)
+    }
+
     return { 
       a: 'section', class: 'split', __keydown: updateLetters, c: [
         { a: Board, cells, updateCellState },
-        { a: Suggestions, filters: getFilters(cells) },
+        { a: Suggestions, cells },
         { a: Counter },
       ]
     }
-  }
-
-  function getFilters(cells) {
-    let filters = {
-      minLetterCount: {},
-      maxLetterCount: {},
-      notHasLetterAt: [[], [], [], [], []],
-      hasLetterAt: [[], [], [], [], []],
-    }
-
-    const rows = chunk(cells, 5)
-    
-    cells.forEach((cell, index) => {
-      const { letter, state } = cell
-      const row = Math.floor(index / 5)
-      const col = index % 5
-      const validCountInRow = rows[row]?.filter(c => c.state > 0 && c.letter === letter).length
-
-      if (state > 0)
-        filters.minLetterCount[letter] = validCountInRow
-      else
-        filters.maxLetterCount[letter] = validCountInRow
-
-      if (state === 2)
-        filters.hasLetterAt[col].push(letter)
-      else
-        filters.notHasLetterAt[col].push(letter)
-    })
-
-    return filters
-  }
+  }})
 </script>
