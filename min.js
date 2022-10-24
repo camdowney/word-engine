@@ -36,12 +36,12 @@ export function render(at, props, replace) {
   if (typeof props === 'string') return origin.append(createFragment(props))
   if (Array.isArray(props)) return props.forEach(p => render(origin, p))
 
-  const { r: ctr, ...params } = props
-  const isComponent = typeof ctr === 'function'
+  const { r, ...params } = props
+  const isComponent = typeof r === 'function'
 
   if (isComponent) storeID = 0
 
-  const { c: children, ...atts } = isComponent ? ctr(params) : props
+  const { c: children, ...atts } = isComponent ? r(params) : props
   let created = null
 
   if (replace) {
