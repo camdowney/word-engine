@@ -7,7 +7,7 @@ export default function Counter() {
     class: 'counter-outer',
     _click: () => setCount(count + 1),
     c: [
-      `<p>${count}</p>`,
+      { r: 'p', c: count },
       { r: Counter2 },
     ],
   }
@@ -19,6 +19,6 @@ function Counter2() {
   return {
     class: 'counter-inner',
     _click: () => setCount(count + 1),
-    c: `<p>${count}</p>`,
+    c: { r: 'p', c: count },
   }
 }

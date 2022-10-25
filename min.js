@@ -13,8 +13,8 @@ export function store(initial) {
 
   const setStore = value => {
     const { e, props } = components[cid]
-    
-    storage[key] = value
+
+    storage[key] = typeof value === 'function' ? value(storage[key]) : value
     currentID = cid
   
     e.dispatchEvent(new Event('unmount'))
@@ -30,10 +30,10 @@ export function store(initial) {
 export function render(at, props, replace) {
   if (!at) return
 
-  const origin = typeof at === 'string' ? document?.querySelector(at) : at
+  const origin = typeof at !== 'string' ? at : document?.querySelector(at)
 
   if (props === undefined) return origin.append(createFragment(''))
-  if (typeof props === 'string') return origin.append(createFragment(props))
+  if (typeof props !== 'object') return origin.append(createFragment(props))
   if (Array.isArray(props)) return props.forEach(p => render(origin, p))
 
   const { r, ...params } = props
@@ -56,7 +56,7 @@ export function render(at, props, replace) {
   }
 
   if (isComponent) components[currentID++] = { e: created, props }
-  if (children) render(created, children)
+  if (children !== undefined) render(created, children)
 
   created.dispatchEvent(new Event('mount'))
   return created
