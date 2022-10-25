@@ -4,7 +4,7 @@ export default function Board({ cells, updateCellState }) {
   const emptyCells = Array(NUM_CELLS - cells.length)
 
   return {
-    id: 'board',
+    class: 'board',
     _click: updateCellState,
     c: [...cells, ...emptyCells].map((cell, i) => ({
       class: 'cell',

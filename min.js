@@ -41,7 +41,7 @@ export function render(at, props, replace) {
 
   if (isComponent) storeID = 0
 
-  const { c: children, ...atts } = isComponent ? r(params) : props
+  const { c: children, ...atts } = isComponent ? r({ cid: '_' + currentID, ...params }) : props
   let created = null
 
   if (replace) {

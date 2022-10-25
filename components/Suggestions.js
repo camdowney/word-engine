@@ -7,7 +7,7 @@ import getFiltersFromCells from '../lib/getFiltersFromCells.js'
 const PAGE_SIZE = 100
 const SCROLL_OFFSET = 600
 
-export default function Suggestions({ cells }) {
+export default function Suggestions({ cid, cells }) {
   const filtered = filterWords(fiveLetterWords, getFiltersFromCells(cells))
   const all = filtered.map(w => `<p>${w}</p>`)
   const numPages = getNumPages(all, PAGE_SIZE)
@@ -15,7 +15,7 @@ export default function Suggestions({ cells }) {
   let currentPage = 0
 
   const loadMoreSuggestions = () => {
-    const list = document.querySelector('#suggestions-list')
+    const list = document.querySelector('#' + cid)
 
     if (list.scrollTop < list.scrollHeight - SCROLL_OFFSET) return
     if (currentPage === numPages) return list.removeEventListener('scroll', loadMoreSuggestions)
@@ -24,11 +24,11 @@ export default function Suggestions({ cells }) {
   }
   
   return {
-    id: 'suggestions',
+    class: 'suggestions',
     _mount: loadMoreSuggestions,
     c: [
-      `<p class="suggestions-header">Showing ${filtered.length} possible words</p>`,
-      { id: 'suggestions-list', _scroll: loadMoreSuggestions },
+      { r: 'p', class: 'suggestions-header', c: `Showing ${filtered.length} possible words` },
+      { id: cid, class: 'suggestions-list', _scroll: loadMoreSuggestions },
     ],
   }
 }
