@@ -4,6 +4,7 @@ let currentID = 0
 let storeID = 0
 
 const createFragment = html => document.createRange().createContextualFragment(html)
+const dispatch = (at, event) => at.dispatchEvent(new Event(event))
 
 export function store(initial) {
   const cid = currentID
@@ -42,8 +43,8 @@ export function render(at, props, replace) {
   if (replace) {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
-    origin.dispatchEvent(new Event('unmount'))
-    origin.querySelectorAll('*').forEach(c => c.dispatchEvent(new Event('unmount')))
+    dispatch(origin, 'unmount')
+    origin.querySelectorAll('*').forEach(c => dispatch(c, 'unmount'))
     parent.replaceChild(createElement(atts), origin)
     created = parent.children[index]
   }
@@ -55,7 +56,7 @@ export function render(at, props, replace) {
   if (isComponent) components[currentID++] = { e: created, props }
   if (children !== undefined) render(created, children)
 
-  created.dispatchEvent(new Event('mount'))
+  dispatch(created, 'mount')
   return created
 }
 
