@@ -13,14 +13,9 @@ export function store(initial) {
 
   const setStore = value => {
     const { e, props } = components[cid]
-
     storage[key] = typeof value === 'function' ? value(storage[key]) : value
     currentID = cid
-  
-    e.dispatchEvent(new Event('unmount'))
-    e.querySelectorAll('*').forEach(c => c.dispatchEvent(new Event('unmount')))
     render(e, props, true)
-  
     currentID = components.length
   }
 
@@ -47,6 +42,8 @@ export function render(at, props, replace) {
   if (replace) {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
+    origin.dispatchEvent(new Event('unmount'))
+    origin.querySelectorAll('*').forEach(c => c.dispatchEvent(new Event('unmount')))
     parent.replaceChild(createElement(atts), origin)
     created = parent.children[index]
   }
