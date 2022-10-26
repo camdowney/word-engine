@@ -8,9 +8,6 @@
   <link rel='stylesheet' href='./style.css'>
 </head>
 <body>
-  <header></header>
-  <main></main>
-  <footer></footer>
 </body>
 </html>
 
@@ -23,7 +20,7 @@
 
   const NUM_CELLS = 30
 
-  render('main', { r: () => {
+  render('body', { r: () => {
     const [cells, setCells] = store([])
 
     const updateLetters = e => {
@@ -42,12 +39,16 @@
       setCells(c => (c[index].state = (c[index].state + 1) % 3) ? c : c)
     }
 
-    return { 
-      r: 'section', class: 'split', __keydown: updateLetters, c: [
-        { r: Board, cells, updateCellState },
-        { r: Suggestions, cells },
-        { r: Counter },
-      ]
-    }
+    return { c: [
+      { r: 'header' },
+      { r: 'main', c: [
+        { r: 'section', class: 'split', __keydown: updateLetters, c: [
+          { r: Board, cells, updateCellState },
+          { r: Suggestions, cells },
+          { r: Counter },
+        ]},
+      ]},
+      { r: 'footer' },
+    ]}
   }})
 </script>
