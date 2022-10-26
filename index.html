@@ -39,6 +39,18 @@
       setCells(c => (c[index].state = (c[index].state + 1) % 3) ? c : c)
     }
 
+    console.log([
+      ('header'),
+      ('main', [
+        ('section', { class: 'split', __keydown: updateLetters }, [
+          (Board, { cells, updateCellState }),
+          (Suggestions, { cells }),
+          (Counter),
+        ]),
+      ]),
+      ('footer'),
+    ])
+
     return { c: [
       { r: 'header' },
       { r: 'main', c: [
