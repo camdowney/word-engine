@@ -39,6 +39,7 @@
       setCells(c => (c[index].state = (c[index].state + 1) % 3) ? c : c)
     }
 
+    // will have to allow arbitrary number of props in array, infer their types and purposes
     console.log([
       ('header'),
       ('main', [
