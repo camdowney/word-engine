@@ -1,8 +1,3 @@
-let storage = {}
-let components = []
-let currentID = 0
-let storeID = 0
-
 const createFragment = html => 
   document.createRange().createContextualFragment(html)
 
@@ -12,26 +7,44 @@ const dispatch = (at, event) =>
 const err = code => 
   console.error(`FernJS error #${code}: see url/${code} for more details.`)
 
-export function store(initial) {
-  const cid = currentID
-  const key = `${cid}-${storeID++}`
+const createElement = ({ r, ...props }) => {
+  let effects = {}
+  let listeners = {}
+  let atts = {}
 
-  if (!storage[key]) 
-    storage[key] = initial
+  Object.entries(props).forEach(([key, value]) => 
+    key.startsWith('__') 
+    ? effects[key.substring(2)] = value 
+    : key.startsWith('_') 
+      ? listeners[key.substring(1)] = value 
+      : atts[key] = value)
 
-  const setStore = value => {
-    storage[key] = typeof value === 'function' ? value(storage[key]) : value
-    
-    const { e, props } = components[cid]
-    currentID = cid
-    render(e, props, true)
-    currentID = components.length
-  }
+  const tag = r || 'div'
 
-  return [storage[key], setStore]
+  const attsHTML = Object.entries(atts)
+    .filter(([_, value]) => value !== undefined)
+    .map(([key, value]) => `${key.replaceAll('_', '-')}="${value}"`)
+    .join('')
+
+  const created = createFragment(`<${tag} ${attsHTML}></${tag}>`)
+
+  const addEvent = ([e, f]) => created.firstChild.addEventListener(e, f)
+
+  Object.entries(effects).forEach(([e, f]) => {
+    addEvent(['mount', () => window.addEventListener(e, f)])
+    addEvent(['unmount', () => window.removeEventListener(e, f)])
+  })
+
+  Object.entries(listeners).forEach(addEvent)
+
+  return created
 }
 
-export function render(at, props, replace) {
+let components = []
+let currentID = 0
+let storeID = 0
+
+export const render = (at, props, replace) => {
   if (!at) return
 
   const origin = typeof at !== 'string' ? at : document?.querySelector(at)
@@ -88,37 +101,23 @@ export function render(at, props, replace) {
   return created
 }
 
-function createElement(props) {
-  const { r, ...all } = props
+let storage = {}
 
-  let effects = {}
-  let listeners = {}
-  let atts = {}
+export const store = initial => {
+  const cid = currentID
+  const key = `${cid}-${storeID++}`
 
-  Object.entries(all).forEach(([key, value]) => 
-    key.startsWith('__') 
-    ? effects[key.substring(2)] = value 
-    : key.startsWith('_') 
-      ? listeners[key.substring(1)] = value 
-      : atts[key] = value)
+  if (!storage[key]) 
+    storage[key] = initial
 
-  const tag = r || 'div'
+  const setStore = value => {
+    storage[key] = typeof value === 'function' ? value(storage[key]) : value
+    
+    const { e, props } = components[cid]
+    currentID = cid
+    render(e, props, true)
+    currentID = components.length
+  }
 
-  const attsHTML = Object.entries(atts)
-    .filter(([_, value]) => value !== undefined)
-    .map(([key, value]) => `${key.replaceAll('_', '-')}="${value}"`)
-    .join('')
-
-  const created = createFragment(`<${tag} ${attsHTML}></${tag}>`)
-
-  const addEvent = ([e, f]) => created.firstChild.addEventListener(e, f)
-
-  Object.entries(effects).forEach(([e, f]) => {
-    addEvent(['mount', () => window.addEventListener(e, f)])
-    addEvent(['unmount', () => window.removeEventListener(e, f)])
-  })
-
-  Object.entries(listeners).forEach(addEvent)
-
-  return created
+  return [storage[key], setStore]
 }
