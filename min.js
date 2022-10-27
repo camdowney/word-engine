@@ -5,6 +5,7 @@ let storeID = 0
 
 const createFragment = html => document.createRange().createContextualFragment(html)
 const dispatch = (at, event) => at.dispatchEvent(new Event(event))
+const err = code => console.error(`FernJS error #${code}: see url/${code} for more details.`)
 
 export function store(initial) {
   const cid = currentID
@@ -29,7 +30,7 @@ export function render(at, props, replace) {
   const origin = typeof at !== 'string' ? at : document?.querySelector(at)
 
   if (props === undefined) return origin.append(createFragment(''))
-  if (typeof props === 'function') return console.error('0')
+  if (typeof props === 'function') return err(0)
   if (typeof props !== 'object') return origin.append(createFragment(props))
   if (Array.isArray(props)) return props.forEach(p => render(origin, p))
 
@@ -38,7 +39,10 @@ export function render(at, props, replace) {
 
   if (isComponent) storeID = 0
 
-  const { c: children, ...atts } = isComponent ? r({ cid: '_' + currentID, ...params }) : props
+  const obj = isComponent ? r({ cid: '_' + currentID, ...params }) : props
+  if (typeof obj !== 'object' || Array.isArray(obj)) return err(1)
+
+  const { c: children, ...atts } = obj
   let created = null
 
   if (replace) {
