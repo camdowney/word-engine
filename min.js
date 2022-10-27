@@ -3,19 +3,26 @@ let components = []
 let currentID = 0
 let storeID = 0
 
-const createFragment = html => document.createRange().createContextualFragment(html)
-const dispatch = (at, event) => at.dispatchEvent(new Event(event))
-const err = code => console.error(`FernJS error #${code}: see url/${code} for more details.`)
+const createFragment = html => 
+  document.createRange().createContextualFragment(html)
+
+const dispatch = (at, event) => 
+  at.dispatchEvent(new Event(event))
+
+const err = code => 
+  console.error(`FernJS error #${code}: see url/${code} for more details.`)
 
 export function store(initial) {
   const cid = currentID
   const key = `${cid}-${storeID++}`
 
-  if (!storage[key]) storage[key] = initial
+  if (!storage[key]) 
+    storage[key] = initial
 
   const setStore = value => {
-    const { e, props } = components[cid]
     storage[key] = typeof value === 'function' ? value(storage[key]) : value
+    
+    const { e, props } = components[cid]
     currentID = cid
     render(e, props, true)
     currentID = components.length
@@ -29,18 +36,28 @@ export function render(at, props, replace) {
 
   const origin = typeof at !== 'string' ? at : document?.querySelector(at)
 
-  if (props === undefined) return origin.append(createFragment(''))
-  if (typeof props === 'function') return err(0)
-  if (typeof props !== 'object') return origin.append(createFragment(props))
-  if (Array.isArray(props)) return props.forEach(p => render(origin, p))
+  if (props === undefined) 
+    return origin.append(createFragment(''))
+
+  if (typeof props === 'function')
+    return err(0)
+
+  if (typeof props !== 'object')
+    return origin.append(createFragment(props))
+
+  if (Array.isArray(props))
+    return props.forEach(p => render(origin, p))
 
   const { r, ...params } = props
   const isComponent = typeof r === 'function'
 
-  if (isComponent) storeID = 0
+  if (isComponent) 
+    storeID = 0
 
   const obj = isComponent ? r({ cid: '_' + currentID, ...params }) : props
-  if (typeof obj !== 'object' || Array.isArray(obj)) return err(1)
+
+  if (typeof obj !== 'object' || Array.isArray(obj))
+    return err(1)
 
   const { c: children, ...atts } = obj
   let created = null
@@ -48,7 +65,9 @@ export function render(at, props, replace) {
   if (replace) {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
+
     dispatch(origin, 'unmount')
+
     origin.querySelectorAll('*').forEach(c => dispatch(c, 'unmount'))
     parent.replaceChild(createElement(atts), origin)
     created = parent.children[index]
@@ -58,10 +77,14 @@ export function render(at, props, replace) {
     created = origin.lastChild
   }
 
-  if (isComponent) components[currentID++] = { e: created, props }
-  if (children !== undefined) render(created, children)
+  if (isComponent)
+    components[currentID++] = { e: created, props }
+
+  if (children !== undefined)
+    render(created, children)
 
   dispatch(created, 'mount')
+
   return created
 }
 
@@ -72,12 +95,20 @@ function createElement(props) {
   let listeners = {}
   let atts = {}
 
-  Object.entries(all).forEach(([key, value]) => key.startsWith('__') ? effects[key.substring(2)] = value 
-    : key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
+  Object.entries(all).forEach(([key, value]) => 
+    key.startsWith('__') 
+    ? effects[key.substring(2)] = value 
+    : key.startsWith('_') 
+      ? listeners[key.substring(1)] = value 
+      : atts[key] = value)
 
   const tag = r || 'div'
-  const attHTML = ([key, value]) => `${key.replaceAll('_', '-')}="${value}"`
-  const attsHTML = Object.entries(atts).filter(([_, value]) => value !== undefined).map(attHTML).join('')
+
+  const attsHTML = Object.entries(atts)
+    .filter(([_, value]) => value !== undefined)
+    .map(([key, value]) => `${key.replaceAll('_', '-')}="${value}"`)
+    .join('')
+
   const created = createFragment(`<${tag} ${attsHTML}></${tag}>`)
 
   const addEvent = ([e, f]) => created.firstChild.addEventListener(e, f)
