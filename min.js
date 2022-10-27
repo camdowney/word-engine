@@ -1,10 +1,10 @@
-const createFragment = html => 
+const _createFragment = html => 
   document.createRange().createContextualFragment(html)
 
-const dispatch = (at, event) => 
+const _dispatch = (at, event) => 
   at.dispatchEvent(new Event(event))
 
-const err = code => 
+const _err = code => 
   console.error(`FernJS error #${code}: see url/${code} for more details.`)
 
 const createElement = ({ r, ...props }) => {
@@ -26,7 +26,7 @@ const createElement = ({ r, ...props }) => {
     .map(([key, value]) => `${key.replaceAll('_', '-')}="${value}"`)
     .join('')
 
-  const created = createFragment(`<${tag} ${attsHTML}></${tag}>`)
+  const created = _createFragment(`<${tag} ${attsHTML}></${tag}>`)
 
   const addEvent = ([e, f]) => created.firstChild.addEventListener(e, f)
 
@@ -50,13 +50,13 @@ export const render = (at, props, replace) => {
   const origin = typeof at !== 'string' ? at : document?.querySelector(at)
 
   if (props === undefined) 
-    return origin.append(createFragment(''))
+    return origin.append(_createFragment(''))
 
   if (typeof props === 'function')
-    return err(0)
+    return _err(0)
 
   if (typeof props !== 'object')
-    return origin.append(createFragment(props))
+    return origin.append(_createFragment(props))
 
   if (Array.isArray(props))
     return props.forEach(p => render(origin, p))
@@ -70,7 +70,7 @@ export const render = (at, props, replace) => {
   const obj = isComponent ? r({ cid: '_' + currentID, ...params }) : props
 
   if (typeof obj !== 'object' || Array.isArray(obj))
-    return err(1)
+    return _err(1)
 
   const { c: children, ...atts } = obj
   let created = null
@@ -79,9 +79,9 @@ export const render = (at, props, replace) => {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
 
-    dispatch(origin, 'unmount')
+    _dispatch(origin, 'unmount')
 
-    origin.querySelectorAll('*').forEach(c => dispatch(c, 'unmount'))
+    origin.querySelectorAll('*').forEach(c => _dispatch(c, 'unmount'))
     parent.replaceChild(createElement(atts), origin)
     created = parent.children[index]
   }
@@ -96,7 +96,7 @@ export const render = (at, props, replace) => {
   if (children !== undefined)
     render(created, children)
 
-  dispatch(created, 'mount')
+  _dispatch(created, 'mount')
 
   return created
 }
