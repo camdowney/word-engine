@@ -20,7 +20,7 @@
 
   const NUM_CELLS = 30
 
-  render('body', { r: () => {
+  render('body', () => {
     const [cells, setCells] = store([])
 
     const updateLetters = e => {
@@ -40,14 +40,14 @@
     }
 
     // Will have to allow arbitrary number of args in array, infer their types and purposes
-    // 1 arg: (component, props, or children)
-    // 2 args: (tag, component, or props) (props or children)
+    // 1 arg: (component or children)
+    // 2 args: (tag, component) (props or children)
     // 3 args: (tag, component) (props) (children)
     // tag: e.g. 'header' or 'section'
     // component: function reference
     // props: object with either element attributes or function arguments
     // children: either string, number, or array
-    console.log([
+    return ([
       ('header', {}),
       ('main', [
         ('section', { class: 'split', __keydown: updateLetters }, [
@@ -58,17 +58,5 @@
       ]),
       ('footer', {}),
     ])
-
-    return { c: [
-      { r: 'header' },
-      { r: 'main', c: [
-        { r: 'section', class: 'split', __keydown: updateLetters, c: [
-          { r: Board, cells, updateCellState },
-          { r: Suggestions, cells },
-          { r: Counter },
-        ]},
-      ]},
-      { r: 'footer' },
-    ]}
-  }})
+  })
 </script>

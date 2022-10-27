@@ -23,12 +23,12 @@ export default function Suggestions({ cid, cells }) {
     render(list, getPageItems(all, currentPage++, PAGE_SIZE))
   }
   
-  return {
-    class: 'suggestions',
-    _mount: loadMoreSuggestions,
-    c: [
-      { r: 'p', class: 'suggestions-header', c: `Showing ${filtered.length} possible words` },
-      { id: cid, class: 'suggestions-list', _scroll: loadMoreSuggestions },
-    ],
-  }
+  return (
+    ('div', { class: 'suggestions', _mount: loadMoreSuggestions }, [
+      ('p', { class: 'suggestions-header' }, [
+        `Showing ${filtered.length} possible words`
+      ]),
+      ('div', { id: cid, class: 'suggestions-list', _scroll: loadMoreSuggestions }),
+    ])
+  )
 }
