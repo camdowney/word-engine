@@ -20,7 +20,7 @@
 
   const NUM_CELLS = 30
 
-  render('body', { r: () => {
+  render('body', () => {
     const [cells, setCells] = store([])
 
     const updateLetters = e => {
@@ -50,5 +50,5 @@
       ]},
       { r: 'footer' },
     ]}
-  }})
+  })
 </script>

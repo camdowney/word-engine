@@ -29,6 +29,7 @@ export function render(at, props, replace) {
   const origin = typeof at !== 'string' ? at : document?.querySelector(at)
 
   if (props === undefined) return origin.append(createFragment(''))
+  if (typeof props === 'function') return console.error('0')
   if (typeof props !== 'object') return origin.append(createFragment(props))
   if (Array.isArray(props)) return props.forEach(p => render(origin, p))
 
