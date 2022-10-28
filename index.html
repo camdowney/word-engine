@@ -37,7 +37,7 @@
       setCells(c => (c[index].state = (c[index].state + 1) % 3) ? c : c)
     }
 
-    return { c: [
+    return [
       { r: 'header' },
       { r: 'main', c: [
         { r: 'section', class: 'split', __keydown: updateLetters, c: [
@@ -47,6 +47,6 @@
         ]},
       ]},
       { r: 'footer' },
-    ]}
+    ]
   })
 </script>

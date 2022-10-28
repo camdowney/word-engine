@@ -1,9 +1,6 @@
 const _dispatch = (at, event) => 
   at.dispatchEvent(new Event(event))
 
-const _err = code => 
-  console.error(`FernJS error #${code} — see url/${code} for details`)
-
 const createElement = ({ r, ...props }) => {
   let effects = {}
   let listeners = {}
@@ -39,12 +36,10 @@ let storeID = 0
 let storage = {}
 
 export const render = (at, props, replace) => {
-  if (!at) return
+  if (!at || props === undefined)
+    return
 
   const origin = typeof at !== 'string' ? at : document?.querySelector(at)
-
-  if (props === undefined) 
-    return
 
   if (typeof props === 'function')
     return render(origin, { r: props }, replace)
@@ -63,10 +58,7 @@ export const render = (at, props, replace) => {
 
   const obj = isComponent ? r({ cid: '_' + currentID, ...params }) : props
 
-  if (typeof obj !== 'object' || Array.isArray(obj))
-    return _err(1)
-
-  const { c: children, ...atts } = obj
+  const { c: children, ...atts } = (typeof obj !== 'object' || Array.isArray(obj)) ? { r: 'span', c: obj } : obj
   let created = null
 
   if (replace) {
