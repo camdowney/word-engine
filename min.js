@@ -47,7 +47,7 @@ export const render = (at, props, replace) => {
     return
 
   if (typeof props === 'function')
-    return _err(0)
+    return render(origin, { r: props }, replace)
 
   if (Array.isArray(props))
     return props.forEach(p => render(origin, p))

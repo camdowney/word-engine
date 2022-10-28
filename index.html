@@ -18,7 +18,7 @@
   import Suggestions from './components/Suggestions.js'
   import Counter from './components/Counter.js'
 
-  render('body', { r: () => {
+  render('body', () => {
     const [cells, setCells] = store([])
 
     const updateLetters = e => {
@@ -48,5 +48,5 @@
       ]},
       { r: 'footer' },
     ]}
-  }})
+  })
 </script>
