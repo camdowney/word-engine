@@ -30,10 +30,10 @@ const createElement = ({ r, ...props }) => {
   return fragment
 }
 
+let storage = {}
 let components = []
 let currentID = 0
 let storeID = 0
-let storage = {}
 
 export const render = (at, props, replace) => {
   if (!at || props === undefined)
