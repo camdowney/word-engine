@@ -103,3 +103,15 @@ export const store = initial => {
 
   return [storage[key], setStore]
 }
+
+export const memo = (value, dependencies) => {
+  const cid = currentID
+  const key = `${cid}-${storeID++}`
+  const deps = Array.isArray(dependencies) ? dependencies : []
+
+  if (!storage[key] || storage[key].deps.some((stored, i) => stored !== deps[i])) {
+    storage[key] = { value: value(), deps }
+  }
+
+  return storage[key].value
+}
