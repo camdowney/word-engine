@@ -83,8 +83,6 @@ export const render = (at, props, replace) => {
     render(created, children)
 
   _dispatch(created, 'mount')
-
-  return created
 }
 
 export const store = initial => {
