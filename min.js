@@ -40,6 +40,7 @@ const createElement = ({ r, ...props }) => {
 let components = []
 let currentID = 0
 let storeID = 0
+let storage = {}
 
 export const render = (at, props, replace) => {
   if (!at) return
@@ -97,8 +98,6 @@ export const render = (at, props, replace) => {
 
   return created
 }
-
-let storage = {}
 
 export const store = initial => {
   const cid = currentID
