@@ -1,6 +1,3 @@
-const _createFragment = html => 
-  document.createRange().createContextualFragment(html)
-
 const _dispatch = (at, event) => 
   at.dispatchEvent(new Event(event))
 
@@ -26,9 +23,9 @@ const createElement = ({ r, ...props }) => {
     .map(([key, value]) => `${key.replaceAll('_', '-')}="${value}"`)
     .join('')
 
-  const created = _createFragment(`<${tag} ${attsHTML}></${tag}>`)
+  const fragment = document.createRange().createContextualFragment(`<${tag} ${attsHTML}></${tag}>`)
 
-  const addEvent = ([e, f]) => created.firstChild.addEventListener(e, f)
+  const addEvent = ([e, f]) => fragment.firstChild.addEventListener(e, f)
 
   Object.entries(effects).forEach(([e, f]) => {
     addEvent(['mount', () => window.addEventListener(e, f)])
@@ -37,7 +34,7 @@ const createElement = ({ r, ...props }) => {
 
   Object.entries(listeners).forEach(addEvent)
 
-  return created
+  return fragment
 }
 
 let components = []
@@ -50,16 +47,16 @@ export const render = (at, props, replace) => {
   const origin = typeof at !== 'string' ? at : document?.querySelector(at)
 
   if (props === undefined) 
-    return origin.append(_createFragment(''))
+    return
 
   if (typeof props === 'function')
     return _err(0)
 
-  if (typeof props !== 'object')
-    return origin.append(_createFragment(props))
-
   if (Array.isArray(props))
     return props.forEach(p => render(origin, p))
+
+  if (typeof props !== 'object')
+    return origin.innerHTML += props
 
   const { r, ...params } = props
   const isComponent = typeof r === 'function'
