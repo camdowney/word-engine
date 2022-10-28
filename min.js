@@ -2,19 +2,15 @@ const _dispatch = (at, event) =>
   at.dispatchEvent(new Event(event))
 
 const _err = code => 
-  console.error(`FernJS error #${code}: see url/${code} for more details.`)
+  console.error(`FernJS error #${code} — see url/${code} for details`)
 
 const createElement = ({ r, ...props }) => {
   let effects = {}
   let listeners = {}
   let atts = {}
 
-  Object.entries(props).forEach(([key, value]) => 
-    key.startsWith('__') 
-    ? effects[key.substring(2)] = value 
-    : key.startsWith('_') 
-      ? listeners[key.substring(1)] = value 
-      : atts[key] = value)
+  Object.entries(props).forEach(([key, value]) => key.startsWith('__') ? effects[key.substring(2)] = value 
+    : key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
 
   const tag = r || 'div'
 

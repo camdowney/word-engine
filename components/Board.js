@@ -1,7 +1,5 @@
-const NUM_CELLS = 30
-
 export default function Board({ cells, updateCellState }) {
-  const emptyCells = Array(NUM_CELLS - cells.length)
+  const emptyCells = Array(30 - cells.length)
 
   return {
     class: 'board',
