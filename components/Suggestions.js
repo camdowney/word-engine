@@ -15,7 +15,7 @@ export default function Suggestions({ cid, cells }) {
     if (list.scrollTop < list.scrollHeight - 600) return
     if (current === chunks.length) return list.removeEventListener('scroll', loadMoreSuggestions)
     
-    chunks[current++].forEach(word => list.innerHTML += `<p>${word}</p>`)
+    list.innerHTML += chunks[current++].map(word => `<p>${word}</p>`).join('')
   }
   
   return {
