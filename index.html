@@ -11,20 +11,12 @@
 </body>
 </html>
 
-<script src='//cdn.jsdelivr.net/npm/faunadb@latest/dist/faunadb-min.js'></script>
-
 <script type='module'>
   import { render, store } from './min.js'
-  import { isLetter, chunk, tether } from './lib/util.js'
+  import { isLetter, chunk } from './lib/util.js'
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
   import Counter from './components/Counter.js'
-
-  const res2 = await tether.get('https://catfact.ninja/fact')
-  console.log(res2)
-
-  const res = await tether.get('/api/db')
-  console.log(res)
 
   render('body', () => {
     const [cells, setCells] = store([])
