@@ -33,6 +33,8 @@
 
   console.log(res)
 
+  const start = performance.now();
+
   render('body', () => {
     const [cells, setCells] = store([])
 
@@ -66,4 +68,6 @@
       { r: 'footer' },
     ]
   })
+
+  render('footer', `<p>${performance.now() - start}</p>`)
 </script>
