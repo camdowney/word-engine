@@ -1,7 +1,7 @@
-const _dispatch = (at, event) => 
+const signal = (at, event) => 
   at.dispatchEvent(new Event(event))
 
-const createElement = ({ r, ...props }) => {
+const build = ({ r, ...props }) => {
   let effects = {}
   let listeners = {}
   let atts = {}
@@ -9,16 +9,10 @@ const createElement = ({ r, ...props }) => {
   Object.entries(props).forEach(([key, value]) => key.startsWith('__') ? effects[key.substring(2)] = value 
     : key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
 
-  const tag = r || 'div'
+  const created = document.createElement(r || 'div')
+  Object.entries(atts).forEach(([att, value]) => created.setAttribute(att.replaceAll('_', '-'), value))
 
-  const attsHTML = Object.entries(atts)
-    .filter(([_, value]) => value !== undefined)
-    .map(([key, value]) => `${key.replaceAll('_', '-')}="${value}"`)
-    .join('')
-
-  const fragment = document.createRange().createContextualFragment(`<${tag} ${attsHTML}></${tag}>`)
-
-  const addEvent = ([e, f]) => fragment.firstChild.addEventListener(e, f)
+  const addEvent = ([e, f]) => created.addEventListener(e, f)
 
   Object.entries(effects).forEach(([e, f]) => {
     addEvent(['mount', () => window.addEventListener(e, f)])
@@ -27,7 +21,7 @@ const createElement = ({ r, ...props }) => {
 
   Object.entries(listeners).forEach(addEvent)
 
-  return fragment
+  return created
 }
 
 let storage = {}
@@ -65,14 +59,14 @@ export const render = (at, props, replace) => {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
 
-    _dispatch(origin, 'unmount')
+    signal(origin, 'unmount')
 
-    origin.querySelectorAll('*').forEach(c => _dispatch(c, 'unmount'))
-    parent.replaceChild(createElement(atts), origin)
+    origin.querySelectorAll('*').forEach(c => signal(c, 'unmount'))
+    parent.replaceChild(build(atts), origin)
     created = parent.children[index]
   }
   else {
-    origin.append(createElement(atts))
+    origin.append(build(atts))
     created = origin.lastChild
   }
 
@@ -82,7 +76,7 @@ export const render = (at, props, replace) => {
   if (children !== undefined)
     render(created, children)
 
-  _dispatch(created, 'mount')
+  signal(created, 'mount')
 }
 
 export const store = initial => {
