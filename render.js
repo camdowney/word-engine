@@ -1,32 +1,16 @@
-const _dispatch = (at, event) => 
-  at.dispatchEvent(new Event(event))
-
-const createElement = ({ r, ...props }) => {
-  let effects = {}
+const build = ({ r, ...props }) => {
   let listeners = {}
   let atts = {}
 
-  Object.entries(props).forEach(([key, value]) => key.startsWith('__') ? effects[key.substring(2)] = value 
-    : key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
+  Object.entries(props).forEach(([key, value]) => 
+    key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
 
-  const tag = r || 'div'
+  const created = document.createElement(r || 'div')
+  Object.entries(atts).forEach(([att, value]) => created.setAttribute(att.replaceAll('_', '-'), value))
 
-  const attsHTML = Object.entries(atts)
-    .filter(([_, value]) => value !== undefined)
-    .map(([key, value]) => `${key.replaceAll('_', '-')}="${value}"`)
-    .join('')
+  Object.entries(listeners).forEach(([e, f]) => created.addEventListener(e, f))
 
-  const fragment = document.createRange().createContextualFragment(`<${tag} ${attsHTML}></${tag}>`)
-
-  const addEvent = ([e, f]) => fragment.firstChild.addEventListener(e, f)
-
-  Object.entries(effects).forEach(([e, f]) => {
-    addEvent(['mount', () => window.addEventListener(e, f)])
-  })
-
-  Object.entries(listeners).forEach(addEvent)
-
-  return fragment
+  return created
 }
 
 let currentID = 0
@@ -52,12 +36,18 @@ export const render = (at, props) => {
   const obj = isComponent ? r({ cid: '_' + currentID, ...params }) : props
 
   const { c: children, ...atts } = (typeof obj !== 'object' || Array.isArray(obj)) ? { r: 'span', c: obj } : obj
+  let created = null
 
-  origin.append(createElement(atts))
-  const created = origin.lastChild
+  origin.append(build(atts))
+  created = origin.lastChild
+
+  if (isComponent)
+    currentID++
 
   if (children !== undefined)
     render(created, children)
 
-  _dispatch(created, 'mount')
+  created.dispatchEvent(new Event('mount'))
 }
+
+export default render
