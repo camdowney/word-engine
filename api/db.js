@@ -4,6 +4,8 @@ export default async (req, res) => {
   if (req.method !== 'GET')
     return res.status(400).json({ msg: 'Invalid request' })
 
+  return res.status(200).json({ data })
+
   try {
     const data = await tether.get('https://data.mongodb-api.com/app/data-karip/endpoint/data/v1/action/find', {
       headers: {
