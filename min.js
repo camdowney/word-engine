@@ -9,10 +9,21 @@ const build = ({ r, ...props }) => {
   Object.entries(props).forEach(([key, value]) => key.startsWith('__') ? effects[key.substring(2)] = value 
     : key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
 
-  const created = document.createElement(r || 'div')
-  Object.entries(atts).forEach(([att, value]) => created.setAttribute(att.replaceAll('_', '-'), value))
+  // const created = document.createElement(r || 'div')
+  // Object.entries(atts).forEach(([att, value]) => created.setAttribute(att.replaceAll('_', '-'), value))
 
-  const addEvent = ([e, f]) => created.addEventListener(e, f)
+  // const addEvent = ([e, f]) => created.addEventListener(e, f)
+
+  const tag = r || 'div'
+
+  const attsHTML = Object.entries(atts)
+    .filter(([_, value]) => value !== undefined)
+    .map(([key, value]) => `${key.replaceAll('_', '-')}="${value}"`)
+    .join('')
+
+  const created = document.createRange().createContextualFragment(`<${tag} ${attsHTML}></${tag}>`)
+
+  const addEvent = ([e, f]) => created.firstChild.addEventListener(e, f)
 
   Object.entries(effects).forEach(([e, f]) => {
     addEvent(['mount', () => window.addEventListener(e, f)])
