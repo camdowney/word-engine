@@ -30,10 +30,10 @@
   }
 
   const res = await get('https://catfact.ninja/fact')
-
   console.log(res)
 
-  const start = performance.now();
+  let total = 0
+  let trials = 0
 
   render('body', () => {
     const [cells, setCells] = store([])
@@ -42,10 +42,22 @@
       const key = e.key.toLowerCase()
 
       if (key === 'backspace' && cells.length > 0) {
+        const start = performance.now()
+
         setCells(cells.slice(0, cells.length - 1))
+      
+        total += performance.now() - start
+        trials++
+        console.log(total / trials)
       }
       else if (!e.repeat && isLetter(key) && cells.length < 30) {
+        const start = performance.now()
+
         setCells([...cells, { letter: key, state: 0 }])
+
+        total += performance.now() - start
+        trials++
+        console.log(total / trials)
       }
     }
 
@@ -64,10 +76,33 @@
           { r: Suggestions, cells },
           { r: Counter },
         ]},
+        { r: 'section', class: 'split', __keydown: updateLetters, c: [
+          { r: Board, cells, updateCellState },
+          { r: Suggestions, cells },
+          { r: Counter },
+        ]},
+        { r: 'section', class: 'split', __keydown: updateLetters, c: [
+          { r: Board, cells, updateCellState },
+          { r: Suggestions, cells },
+          { r: Counter },
+        ]},
+        { r: 'section', class: 'split', __keydown: updateLetters, c: [
+          { r: Board, cells, updateCellState },
+          { r: Suggestions, cells },
+          { r: Counter },
+        ]},
+        { r: 'section', class: 'split', __keydown: updateLetters, c: [
+          { r: Board, cells, updateCellState },
+          { r: Suggestions, cells },
+          { r: Counter },
+        ]},
+        { r: 'section', class: 'split', __keydown: updateLetters, c: [
+          { r: Board, cells, updateCellState },
+          { r: Suggestions, cells },
+          { r: Counter },
+        ]},
       ]},
       { r: 'footer' },
     ]
   })
-
-  render('footer', `<p>${performance.now() - start}</p>`)
 </script>
