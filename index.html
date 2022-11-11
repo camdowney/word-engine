@@ -35,6 +35,8 @@
   let total = 0
   let trials = 0
 
+  const startRender = performance.now()
+
   render('body', () => {
     const [cells, setCells] = store([])
 
@@ -80,4 +82,6 @@
       { r: 'footer' },
     ]
   })
+
+  render('header', { c: performance.now() - startRender})
 </script>
