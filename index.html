@@ -21,7 +21,7 @@
   import Suggestions from './components/Suggestions.js'
 
   window.addEventListener('load', () => {
-    document.querySelector('.loading').remove()
+    document.querySelector('.loading').classList.add('complete')
   })
 
   render('body', () => {
