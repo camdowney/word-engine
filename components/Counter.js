@@ -1,4 +1,4 @@
-import { store } from '../min.js'
+import { store } from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 
 export default function Counter() {
   const [count, setCount] = store(0)
