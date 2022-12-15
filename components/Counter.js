@@ -8,12 +8,12 @@ export default function Counter() {
     _click: () => setCount(count + 1),
     c: [
       { r: 'p', c: count },
-      { r: Counter2 },
+      { r: NestedCounter },
     ],
   }
 }
 
-function Counter2() {
+function NestedCounter() {
   const [count, setCount] = store(0)
 
   return {
