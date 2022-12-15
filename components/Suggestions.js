@@ -12,8 +12,11 @@ export default function Suggestions({ uid, cells }) {
   const loadMoreSuggestions = () => {
     const list = document.querySelector('#' + uid)
 
-    if (list.scrollTop < list.scrollHeight - 600) return
-    if (current === chunks.length) return list.removeEventListener('scroll', loadMoreSuggestions)
+    if (list.scrollTop < list.scrollHeight - 600)
+      return
+
+    if (current === chunks.length)
+      return list.removeEventListener('scroll', loadMoreSuggestions)
     
     list.innerHTML += chunks[current++].map(word => `<p>${word}</p>`).join('')
   }
