@@ -8,6 +8,9 @@
   <link rel='stylesheet' href='./style.css'>
 </head>
 <body>
+  <div class='loading'>
+    <div class='loading-icon'></div>
+  </div>
 </body>
 </html>
 
@@ -16,6 +19,10 @@
   import { isLetter, chunk } from './lib/util.js'
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
+
+  window.addEventListener('load', () => {
+    document.querySelector('.loading').remove()
+  })
 
   render('body', () => {
     const [cells, setCells] = store([])
@@ -40,7 +47,7 @@
       let newCells = cells
       newCells[index].state = (cells[index].state + 1) % 3
       setCells(newCells)
-    }
+    } 
 
     return [
       { r: 'header' },
