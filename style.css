@@ -115,7 +115,7 @@ main {
 }
 
 .suggestions-list {
-  max-height: 32rem;
+  max-height: 25rem;
   overflow-y: scroll;
 }
 
