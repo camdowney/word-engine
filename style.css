@@ -42,7 +42,7 @@ main {
   align-items: center;
   background-color: var(--gray-900);
   z-index: 100;
-  transition: 0.2s 0.3s;
+  transition: 0.2s 0.2s;
 }
 
 .loading-icon {
