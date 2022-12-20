@@ -4,7 +4,7 @@ import filterWords from '../lib/filterWords.js'
 import getFiltersFromCells from '../lib/getFiltersFromCells.js'
 
 export default function Suggestions({ cells }) {
-  const filtered = filterWords(fiveLetterWords, getFiltersFromCells(cells))
+  const filtered = filterWords(fiveLetterWords, getFiltersFromCells(cells.value))
   const chunks = chunk(filtered, 100)
 
   let current = 0
@@ -24,8 +24,20 @@ export default function Suggestions({ cells }) {
   return {
     class: 'suggestions',
     c: [
-      { r: 'p', class: 'suggestions-header', c: `Showing ${filtered.length} possible words` },
-      { class: 'suggestions-list', _mount: loadMore, _scroll: loadMore },
+      { tag: Header, filtered },
+      { tag: List, loadMore },
     ],
   }
 }
+
+const Header = ({ filtered }) => ({
+  tag: 'p',
+  class: 'suggestions-header',
+  c: `Showing ${filtered.length} possible words`
+})
+
+const List = ({ loadMore }) => ({
+  class: 'suggestions-list',
+  _mount: loadMore,
+  _scroll: loadMore,
+})
