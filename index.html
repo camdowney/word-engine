@@ -41,13 +41,14 @@
 
     const cycleColors = e => {
       const index = e.srcElement.dataset.index
-      
-      if (!cells.value[index])
+      const selectedCell = cells.value[index]
+
+      if (!selectedCell)
         return
 
-      let newCells = cells.value
-      newCells[index].state = (cells.value[index].state + 1) % 3
-      cells.value = newCells
+      let updatedCells = cells.value
+      updatedCells[index].state = (selectedCell.state + 1) % 3
+      cells.value = updatedCells
     } 
 
     return { 
