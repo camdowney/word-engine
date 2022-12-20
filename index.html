@@ -39,7 +39,7 @@
       }
     }
 
-    const updateCellState = e => {
+    const cycleColors = e => {
       const index = e.srcElement.dataset.index
       
       if (!cells.value[index])
@@ -53,7 +53,7 @@
     return { 
       tag: 'main', c: { 
         tag: 'section', class: 'split', __keydown: updateLetters, c: [
-          { tag: Board, cells, updateCellState },
+          { tag: Board, cells, cycleColors },
           { tag: Suggestions, cells },
         ]
       }
