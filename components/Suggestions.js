@@ -4,7 +4,7 @@ import filterWords from '../lib/filterWords.js'
 import getFiltersFromCells from '../lib/getFiltersFromCells.js'
 
 export default function Suggestions({ cells }) {
-  const filtered = filterWords(fiveLetterWords, getFiltersFromCells(cells.value))
+  const filtered = filterWords(fiveLetterWords, getFiltersFromCells(cells))
   const chunks = chunk(filtered, 100)
 
   let current = 0
