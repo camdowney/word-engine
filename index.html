@@ -15,8 +15,8 @@
 </html>
 
 <script type='module'>
-  import { render, unmount, signal } from './min.js'
-  import { isLetter, chunk } from './lib/util.js'
+  import { render, update } from './min.js'
+  import { isLetter } from './lib/util.js'
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
 
@@ -24,7 +24,7 @@
     document.querySelector('.loading').classList.add('complete')
   })
 
-  render('body', () => {
+  render('body', ({ get }) => {
     let cells = []
 
     const __keydown = e => {
@@ -32,11 +32,11 @@
 
       if (key === 'backspace' && cells.length > 0) {
         cells.pop()
-        update()
+        _mount()
       }
       else if (!e.repeat && isLetter(key) && cells.length < 30) {
         cells.push({ letter: key, state: 0 })
-        update()
+        _mount()
       }
     }
 
@@ -47,13 +47,11 @@
         return
       
       cells[index].state = (cells[index].state + 1) % 3
-      update()
+      _mount()
     }
 
-    const update = () => {
-      unmount('.split *')
-
-      render('.split', [
+    const _mount = () => {
+      update(get().children[0], [
         { tag: Board, cells, cycleColors },
         { tag: Suggestions, cells },
       ])
@@ -64,7 +62,7 @@
         tag: 'section',
         class: 'split',
         __keydown,
-        _mount: update,
+        _mount,
       }
     }
   })

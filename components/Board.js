@@ -1,4 +1,4 @@
-export default function Board({ get, cells, cycleColors }) {
+export default function Board({ cells, cycleColors }) {
   const emptyCells = Array(30 - cells.length)
 
   return {
