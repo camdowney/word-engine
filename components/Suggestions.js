@@ -1,5 +1,5 @@
 import { chunk } from '../lib/util.js'
-import { fiveLetterWords } from '../dictionary/fiveLetterWords.js'
+import fiveLetterWords from '../dictionary/fiveLetterWords.js'
 import filterWords from '../lib/filterWords.js'
 import getFiltersFromCells from '../lib/getFiltersFromCells.js'
 
@@ -24,20 +24,10 @@ export default function Suggestions({ cells }) {
   return {
     class: 'suggestions',
     c: [
-      { tag: Header, filtered },
-      { tag: List, loadMore },
+      { tag: 'p', class: 'suggestions-header', c: 
+        `Showing ${filtered.length} possible words`
+      },
+      { class: 'suggestions-list', _mount: loadMore, _scroll: loadMore },
     ],
   }
 }
-
-const Header = ({ filtered }) => ({
-  tag: 'p',
-  class: 'suggestions-header',
-  c: `Showing ${filtered.length} possible words`
-})
-
-const List = ({ loadMore }) => ({
-  class: 'suggestions-list',
-  _mount: loadMore,
-  _scroll: loadMore,
-})

@@ -15,7 +15,7 @@
 </html>
 
 <script type='module'>
-  import { render, update } from './min.js'
+  import render from './min.js'
   import { isLetter } from './lib/util.js'
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
@@ -32,37 +32,41 @@
 
       if (key === 'backspace' && cells.length > 0) {
         cells.pop()
-        _mount()
+        update()
       }
       else if (!e.repeat && isLetter(key) && cells.length < 30) {
         cells.push({ letter: key, state: 0 })
-        _mount()
+        update()
       }
     }
 
-    const cycleColors = e => {
+    const _click = e => {
       const index = e.srcElement.dataset.index
 
       if (!cells[index])
         return
       
       cells[index].state = (cells[index].state + 1) % 3
-      _mount()
+      update()
     }
 
-    const _mount = () => {
-      update(get().children[0], [
-        { tag: Board, cells, cycleColors },
+    const update = () => {
+      const start = performance.now()
+
+      render(get().firstChild, [
+        { tag: Board, cells },
         { tag: Suggestions, cells },
-      ])
+      ], true)
+      
+      console.log(performance.now() - start)
     }
 
     return { 
-      tag: 'main', c: { 
+      tag: 'main', _mount: update, c: {
         tag: 'section',
         class: 'split',
         __keydown,
-        _mount,
+        _click,
       }
     }
   })

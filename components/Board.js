@@ -1,9 +1,8 @@
-export default function Board({ cells, cycleColors }) {
+export default function Board({ cells }) {
   const emptyCells = Array(30 - cells.length)
 
   return {
     class: 'board',
-    _click: cycleColors,
     c: [...cells, ...emptyCells].map((cell, i) => ({
       class: 'cell',
       data_index: i,
