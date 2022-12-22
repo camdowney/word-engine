@@ -40,14 +40,13 @@
       }
     }
 
-    const _cycle = e => {
-      const index = e.detail.index
-      
+    const cycleColors = e => {
+      const index = e.srcElement.dataset.index
+
       if (!cells[index])
         return
-
+      
       cells[index].state = (cells[index].state + 1) % 3
-
       update()
     }
 
@@ -55,7 +54,7 @@
       unmount('.split *')
 
       render('.split', [
-        { tag: Board, cells },
+        { tag: Board, cells, cycleColors },
         { tag: Suggestions, cells },
       ])
     }
@@ -65,7 +64,6 @@
         tag: 'section',
         class: 'split',
         __keydown,
-        _cycle,
         _mount: update,
       }
     }
