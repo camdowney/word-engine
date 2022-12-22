@@ -24,7 +24,7 @@
     document.querySelector('.loading').classList.add('complete')
   })
 
-  render('body', ({ get }) => {
+  render('body', ({ ref }) => {
     let cells = []
 
     const __keydown = e => {
@@ -53,7 +53,7 @@
     const update = () => {
       const start = performance.now()
 
-      render(get().firstChild, [
+      render(ref().firstChild, [
         { tag: Board, cells },
         { tag: Suggestions, cells },
       ], true)
