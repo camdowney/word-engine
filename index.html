@@ -15,7 +15,7 @@
 </html>
 
 <script type='module'>
-  import render from 'https://cdn.jsdelivr.net/gh/camdowney/render@1.0.2/min.js'
+  import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
   import { isLetter, chunk } from './lib/util.js'
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
@@ -32,23 +32,24 @@
       const numFilledCells = cells.value.length
 
       if (key === 'backspace' && numFilledCells > 0) {
-        cells.value = cells.value.slice(0, numFilledCells - 1)
+        cells.value.pop()
+        cells.signal()
       }
       else if (!e.repeat && isLetter(key) && numFilledCells < 30) {
-        cells.value = [...cells.value, { letter: key, state: 0 }]
+        cells.value.push({ letter: key, state: 0 })
+        cells.signal()
       }
     }
 
     const cycleColors = e => {
       const index = e.srcElement.dataset.index
-      const selectedCell = cells.value[index]
+      const cell = cells.value[index]
 
-      if (!selectedCell)
+      if (!cell)
         return
 
-      let updatedCells = cells.value
-      updatedCells[index].state = (selectedCell.state + 1) % 3
-      cells.value = updatedCells
+      cell.state = (cell.state + 1) % 3
+      cells.signal()
     } 
 
     return { 
