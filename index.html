@@ -20,14 +20,14 @@
   import Board from './components/Board.js'
   import Suggestions from './components/Suggestions.js'
 
-  window.addEventListener('load', () => {
+  window.addEventListener('load', () =>
     document.querySelector('.loading').classList.add('complete')
-  })
+  )
 
-  render('body', ({ store }) => {
+  render(document.body, ({ store }) => {
     const cells = store([])
 
-    const updateLetters = e => {
+    const __keydown = e => {
       const key = e.key.toLowerCase()
       const numFilledCells = cells.value.length
 
@@ -41,7 +41,7 @@
       }
     }
 
-    const cycleColors = e => {
+    const _click = e => {
       const index = e.srcElement.dataset.index
       const cell = cells.value[index]
 
@@ -54,8 +54,8 @@
 
     return { 
       tag: 'main', c: { 
-        tag: 'section', class: 'split', __keydown: updateLetters, c: [
-          { tag: Board, cells, cycleColors },
+        tag: 'section', class: 'split', __keydown, c: [
+          { tag: Board, cells, _click },
           { tag: Suggestions, cells },
         ]
       }
