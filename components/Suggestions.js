@@ -22,23 +22,12 @@ export default function Suggestions({ cells }) {
   }
   
   return {
-    tag: 'div',
     class: 'suggestions',
     c: [
-      { tag: Header, filtered },
-      { tag: List, loadMore },
+      { tag: 'h2', class: 'suggestions-header', c: 
+        `Showing ${filtered.length} possible words`
+      },
+      { class: 'suggestions-list', _mount: loadMore, _scroll: loadMore },
     ],
   }
 }
-
-const Header = ({ filtered }) => ({
-  tag: 'p',
-  class: 'suggestions-header',
-  c: `Showing ${filtered.length} possible words`
-})
-
-const List = ({ loadMore }) => ({
-  class: 'suggestions-list',
-  _mount: loadMore,
-  _scroll: loadMore,
-})

@@ -10,7 +10,10 @@ export default function Board({ cells, _click }) {
       class: 'cell',
       data_index: i,
       data_state: cell?.state,
-      c: cell?.letter
+      c: [
+        { class: 'cell-shape' },
+        { class: 'cell-letter', c: cell?.letter },
+      ]
     })),
   }
 }

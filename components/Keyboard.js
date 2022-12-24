@@ -1,6 +1,6 @@
 import { isLetter } from '../lib/util.js'
 
-const rows = [
+const keys = [
   'qwertyuiop',
   'asdfghjkl',
   'zxcvbnm←',
@@ -10,7 +10,7 @@ export default function Keyboard() {
   return {
     tag: 'div',
     class: 'keyboard',
-    c: rows.map(row => ({
+    c: keys.map(row => ({
       tag: 'div',
       class: 'keyboard-row',
       c: row.split('').map(Key)
@@ -20,7 +20,7 @@ export default function Keyboard() {
 
 const Key = char => {
   const _click = e => {
-    const value = e.srcElement.firstChild.textContent.trim()
+    const value = e.srcElement.textContent.trim()
     const key = isLetter(value) ? value : 'backspace'
     window.dispatchEvent(new KeyboardEvent('keydown', { key }));
   }
@@ -29,6 +29,9 @@ const Key = char => {
     tag: 'button',
     _click,
     class: 'key',
-    c: { tag: 'p', c: char }
+    c: [
+      { class: 'key-shape' },
+      { class: 'key-letter', c: char },
+    ]
   }
 }

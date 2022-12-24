@@ -16,54 +16,35 @@
 
 <script type='module'>
   import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
-  import { isLetter, chunk } from './lib/util.js'
-  import Board from './components/Board.js'
-  import Keyboard from './components/Keyboard.js'
-  import Suggestions from './components/Suggestions.js'
+  import Layout from './components/Layout.js'
 
   window.addEventListener('load', () =>
     document.querySelector('.loading').classList.add('complete'))
 
-  render(document.body, ({ store }) => {
-    const cells = store([])
+  const start = performance.now()
 
-    const __keydown = e => {
-      const key = e.key.toLowerCase()
-      const numFilledCells = cells.value.length
-
-      if (key === 'backspace' && numFilledCells > 0) {
-        cells.value.pop()
-        cells.signal()
+  render(document.body, [
+    { tag: 'header', c:
+      { tag: 'h1', c: 
+        'Word Engine'
       }
-      else if (!e.repeat && isLetter(key) && numFilledCells < 30) {
-        cells.value.push({ letter: key, state: 0 })
-        cells.signal()
-      }
-    }
+    },
+    { tag: 'main', c:
+      { tag: Layout }
+    },
+    { tag: 'footer', c: 
+      { tag: 'p', c: [
+        `© ${new Date().getFullYear()} Cameron Downey | Built with `,
+        {
+          tag: 'a',
+          href: 'https://github.com/camdowney/render',
+          target: '_blank',
+          rel: 'noopener noreferrer',
+          c: 'Render'
+        }
+      ] } 
+    },
+  ])
 
-    const _click = e => {
-      const index = e.srcElement.dataset.index
-      const cell = cells.value[index]
-
-      if (!cell)
-        return
-
-      cell.state = (cell.state + 1) % 3
-      cells.signal()
-    } 
-
-    return { 
-      tag: 'main', c: { 
-        tag: 'section', class: 'split', __keydown, c: [
-          { tag: 'div', class: 'col', c: [
-            { tag: Board, cells, _click },
-            { tag: Keyboard },
-          ] },
-          { tag: 'div', class: 'col', c: [
-            { tag: Suggestions, cells },
-          ] }
-        ]
-      }
-    }
-  })
+  console.log(performance.now() - start)
 </script>
