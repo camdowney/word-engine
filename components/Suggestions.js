@@ -22,6 +22,7 @@ export default function Suggestions({ cells }) {
   }
   
   return {
+    tag: 'div',
     class: 'suggestions',
     c: [
       { tag: Header, filtered },

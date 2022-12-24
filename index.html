@@ -18,11 +18,11 @@
   import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
   import { isLetter, chunk } from './lib/util.js'
   import Board from './components/Board.js'
+  import Keyboard from './components/Keyboard.js'
   import Suggestions from './components/Suggestions.js'
 
   window.addEventListener('load', () =>
-    document.querySelector('.loading').classList.add('complete')
-  )
+    document.querySelector('.loading').classList.add('complete'))
 
   render(document.body, ({ store }) => {
     const cells = store([])
@@ -55,8 +55,13 @@
     return { 
       tag: 'main', c: { 
         tag: 'section', class: 'split', __keydown, c: [
-          { tag: Board, cells, _click },
-          { tag: Suggestions, cells },
+          { tag: 'div', class: 'col', c: [
+            { tag: Board, cells, _click },
+            { tag: Keyboard },
+          ] },
+          { tag: 'div', class: 'col', c: [
+            { tag: Suggestions, cells },
+          ] }
         ]
       }
     }
