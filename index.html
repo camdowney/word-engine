@@ -15,13 +15,11 @@
 </html>
 
 <script type='module'>
-  import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
+  import render from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
   import Layout from './components/Layout.js'
 
   window.addEventListener('load', () =>
     document.querySelector('.loading').classList.add('complete'))
-
-  const start = performance.now()
 
   render(document.body, [
     { tag: 'header', c:
@@ -37,14 +35,12 @@
         `© ${new Date().getFullYear()} Cameron Downey | Built with `,
         {
           tag: 'a',
-          href: 'https://github.com/camdowney/render',
+          href: 'https://github.com/camdowney/neutro',
           target: '_blank',
           rel: 'noopener noreferrer',
-          c: 'Render'
+          c: 'Neutro'
         }
       ] } 
     },
   ])
-
-  console.log(performance.now() - start)
 </script>
