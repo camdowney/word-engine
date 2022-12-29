@@ -173,6 +173,7 @@ button {
   border-radius: 0.375rem;
   font-size: 1.25rem;
   font-weight: 500;
+  user-select: none;
 }
 
 .key:hover {
