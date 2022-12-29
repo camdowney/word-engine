@@ -1,5 +1,6 @@
 :root {
   --gray-100: #fafafa;
+  --gray-200: #cacaca;
   --gray-600: #3a3a3a;
   --gray-700: #2a2a2a;
   --gray-800: #181818;
@@ -54,6 +55,7 @@ h1 {
 }
 
 h2 {
+  color: var(--gray-200);
   font-size: 1rem;
   font-weight: 400;
 }
@@ -186,21 +188,16 @@ button {
   grid-column: span 2;
 }
 
-.key-backspace {
-  grid-column: span 2;
-}
-
 .suggestions {
   max-width: 20rem;
   background-color: var(--gray-800);
-  /* border: 3px solid var(--gray-700); */
   padding: 1.5rem 2rem;
   border-radius: 1rem;
   margin: 0 auto;
 }
 
 .suggestions-header {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .suggestions-list {

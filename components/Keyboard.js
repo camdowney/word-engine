@@ -34,7 +34,7 @@ const Key = char => {
   return {
     tag: 'button',
     _click,
-    class: cn('key', isBackspace && 'key-backspace'),
+    class: 'key',
     c: [
       { class: 'key-shape' },
       char,
