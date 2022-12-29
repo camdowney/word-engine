@@ -1,17 +1,15 @@
-import { isLetter } from '../lib/util.js'
+import { cn } from '../lib/util.js'
 
 const keys = [
   'qwertyuiop',
-  'asdfghjkl',
-  'zxcvbnm←',
+  '1asdfghjkl1',
+  '2zxcvbnm←',
 ]
 
 export default function Keyboard() {
   return {
-    tag: 'div',
     class: 'keyboard',
     c: keys.map(row => ({
-      tag: 'div',
       class: 'keyboard-row',
       c: row.split('').map(Key)
     }))
@@ -19,19 +17,27 @@ export default function Keyboard() {
 }
 
 const Key = char => {
-  const _click = e => {
-    const value = e.srcElement.textContent.trim()
-    const key = isLetter(value) ? value : 'backspace'
-    window.dispatchEvent(new KeyboardEvent('keydown', { key }));
+  if (Number.isFinite(Number(char))) {
+    return {
+      tag: 'div',
+      class: char === '2' && 'key-2',
+    }
+  }
+
+  const isBackspace = char === '←'
+
+  const _click = () => {
+    const key = isBackspace ? 'backspace' : char
+    window.dispatchEvent(new KeyboardEvent('keydown', { key }))
   }
 
   return {
     tag: 'button',
     _click,
-    class: 'key',
+    class: cn('key', isBackspace && 'key-backspace'),
     c: [
       { class: 'key-shape' },
-      { class: 'key-letter', c: char },
+      char,
     ]
   }
 }
