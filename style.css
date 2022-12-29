@@ -37,7 +37,7 @@ main {
 header {
   display: flex;
   justify-content: center;
-  padding: 1.5rem 1.5rem;
+  padding: 1.25rem 1.5rem;
 }
 
 footer {
@@ -99,7 +99,7 @@ button {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
   padding: 0 1rem;
   margin: 0 auto;
 }
@@ -152,7 +152,7 @@ button {
   width: 100%;
   display: grid;
   gap: 6px;
-  margin: 2rem auto 0 auto;
+  margin: 1rem auto 0 auto;
 }
 
 .keyboard-row {
