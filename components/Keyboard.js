@@ -1,5 +1,3 @@
-import { cn } from '../lib/util.js'
-
 const keys = [
   'qwertyuiop',
   '1asdfghjkl1',
