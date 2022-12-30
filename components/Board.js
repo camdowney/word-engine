@@ -1,5 +1,5 @@
 export default function Board({ cells, _click }) {
-  const allCells = [...cells.value, ...Array(30 - cells.value.length)]
+  const allCells = [...cells.get, ...Array(30 - cells.get.length)]
 
   return {
     class: 'board',

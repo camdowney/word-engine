@@ -8,27 +8,27 @@ export default function Layout({ store }) {
 
   const __keydown = e => {
     const key = e.key.toLowerCase()
-    const numFilledCells = cells.value.length
+    const numFilledCells = cells.get.length
 
     if (key === 'backspace' && numFilledCells > 0) {
-      cells.value.pop()
-      cells.signal()
+      cells.get.pop()
+      cells.flag()
     }
     else if (!e.repeat && isLetter(key) && numFilledCells < 30) {
-      cells.value.push({ letter: key, state: 0 })
-      cells.signal()
+      cells.get.push({ letter: key, state: 0 })
+      cells.flag()
     }
   }
 
   const _click = e => {
     const index = e.srcElement.dataset.index
-    const cell = cells.value[index]
+    const cell = cells.get[index]
 
     if (!cell)
       return
 
     cell.state = (cell.state + 1) % 3
-    cells.signal()
+    cells.flag()
   } 
 
   return { 
