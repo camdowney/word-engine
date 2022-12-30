@@ -39,7 +39,7 @@ export default function Layout({ store }) {
       ] },
       { class: 'col', c: [
         { tag: Suggestions, cells },
-      ] }
+      ] },
     ]
   }
 }
