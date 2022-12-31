@@ -8,28 +8,25 @@ export default function Layout({ store }) {
 
   const __keydown = e => {
     const key = e.key.toLowerCase()
-    const numFilledCells = cells.get.length
 
-    if (key === 'backspace' && numFilledCells > 0) {
-      cells.get.pop()
-      cells.flag()
+    if (key === 'backspace' && cells().length > 0) {
+      cells(cells().slice(0, -1))
     }
-    else if (!e.repeat && isLetter(key) && numFilledCells < 30) {
-      cells.get.push({ letter: key, state: 0 })
-      cells.flag()
+    else if (!e.repeat && isLetter(key) && cells().length < 30) {
+      cells([ ...cells(), { letter: key, state: 0 } ])
     }
   }
 
   const _click = e => {
     const index = e.srcElement.dataset.index
-    const cell = cells.get[index]
 
-    if (!cell)
+    if (!cells()[index])
       return
 
-    cell.state = (cell.state + 1) % 3
-    cells.flag()
-  } 
+    let temp = cells()
+    temp[index].state = (temp[index].state + 1) % 3
+    cells(temp)
+  }
 
   return { 
     tag: 'section', class: 'layout', __keydown, c: [
