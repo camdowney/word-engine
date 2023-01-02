@@ -18,12 +18,12 @@ export default function Layout({ store }) {
 
     if (key === 'backspace' && cells().length > 0) {
       cells().pop()
+      cells(cells())
     }
     else if (!e.repeat && isLetter(key) && cells().length < 30) {
       cells().push({ letter: key, state: 0 })
+      cells(cells())
     }
-
-    cells(cells())
   }
 
   const __keyup = e => {
@@ -49,10 +49,10 @@ export default function Layout({ store }) {
       { class: 'col', c: [
         { tag: Board, cells, _click },
         { tag: Keyboard },
-      ] },
+      ]},
       { class: 'col', c: [
         { tag: Suggestions, cells },
-      ] },
+      ]},
     ]
   }
 }
