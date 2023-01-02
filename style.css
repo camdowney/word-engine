@@ -3,10 +3,10 @@
   --gray-200: #cacaca;
   --gray-600: #3a3a3a;
   --gray-700: #2a2a2a;
-  --gray-800: #181818;
+  --gray-800: #151515;
   --gray-900: #0a0a0a;
 
-  --yellow-500: #cbb857;
+  --yellow-500: #d9c252;
   --green-500: #369146;
 
   --cols-2: repeat(2, minmax(0, 1fr));
@@ -129,7 +129,7 @@ button {
 .cell {
   width: 100%;
   border: 2px solid var(--gray-700);
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 600;
 }
 
@@ -234,7 +234,7 @@ button {
   }
 
   .cell {
-    font-size: 2rem;
+    font-size: 2.25rem;
   }
 
   .keyboard {
