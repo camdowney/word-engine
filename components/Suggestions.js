@@ -9,7 +9,7 @@ export default function Suggestions({ cells }) {
 
   let current = 0
 
-  const loadMore = e => {
+  function loadMore(e) {
     const list = e.srcElement
 
     if (list.scrollTop < list.scrollHeight - 600)

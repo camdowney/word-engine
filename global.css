@@ -79,8 +79,8 @@ button {
 }
 
 .loading-icon {
-  width: 3rem;
-  height: 3rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border: 5px solid var(--gray-600);
   border-radius: 50%;
   border-top-color: transparent;

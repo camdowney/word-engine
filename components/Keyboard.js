@@ -14,7 +14,7 @@ export default function Keyboard() {
   }
 }
 
-const Key = char => {
+function Key(char) {
   if (Number.isFinite(Number(char))) {
     return {
       tag: 'div',
@@ -24,7 +24,7 @@ const Key = char => {
 
   const isBackspace = char === '←'
 
-  const _click = () => {
+  function _click() {
     const key = isBackspace ? 'backspace' : char
     window.dispatchEvent(new KeyboardEvent('keydown', { key }))
   }

@@ -7,7 +7,7 @@ export default function Layout({ store }) {
   const cells = store([])
   let holdingCtrlOrCmd = false
 
-  const __keydown = e => {
+  function __keydown(e) {
     const key = e.key.toLowerCase()
 
     if (key === 'control' || key === 'meta')
@@ -26,14 +26,14 @@ export default function Layout({ store }) {
     }
   }
 
-  const __keyup = e => {
+  function __keyup(e) {
     const key = e.key.toLowerCase()
 
     if (key === 'control' || key === 'meta')
       holdingCtrlOrCmd = false
   }
 
-  const _click = e => {
+  function _click(e) {
     const index = e.srcElement.dataset.index
     const cell = cells()[index]
 
