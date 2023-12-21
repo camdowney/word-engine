@@ -176,6 +176,7 @@ button {
   font-size: 1.125rem;
   font-weight: 500;
   user-select: none;
+  width: 100%;
 }
 
 .key:hover {
