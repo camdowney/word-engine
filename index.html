@@ -6,41 +6,17 @@
   <title>Word Engine</title>
   <meta name='description' content='Stuck on your current guess in Wordle? Simply input your board and Word Engine will automatically narrow down which words are possible!'>
   <link rel='stylesheet' href='./global.css'>
+  <script src='./components/App.js' type='module'></script>
 </head>
 <body>
-  <div class='loading'>
+  <!-- <div class='loading'>
     <div class='loading-icon'></div>
-  </div>
+  </div> -->
+  <span id='root'></span>
 </body>
 </html>
 
-<script type='module'>
-  import render from 'https://cdn.jsdelivr.net/npm/neutro@1.1.7/min.js'
-  import Layout from './components/Layout.js'
-
+<!-- <script type='module'>
   window.addEventListener('load', () =>
     document.querySelector('.loading').classList.add('complete'))
-
-  render(document.body, [
-    { tag: 'header', c:
-      { tag: 'h1', c: 
-        'Word Engine'
-      }
-    },
-    { tag: 'main', c:
-      { tag: Layout }
-    },
-    { tag: 'footer', c: 
-      { tag: 'p', c: [
-        `© ${new Date().getFullYear()} Cameron Downey | Built with `,
-        {
-          tag: 'a',
-          href: 'https://github.com/camdowney/neutro',
-          target: '_blank',
-          rel: 'noopener noreferrer',
-          c: 'Neutro'
-        }
-      ]} 
-    },
-  ])
-</script>
+</script> -->

@@ -1,41 +1,39 @@
-const keys = [
+import { c } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
+
+const keyRows = [
   'qwertyuiop',
   '1asdfghjkl1',
   '2zxcvbnm←',
 ]
 
-export default function Keyboard() {
-  return {
-    class: 'keyboard',
-    c: keys.map(row => ({
-      class: 'keyboard-row',
-      c: row.split('').map(Key)
-    }))
-  }
-}
+export const Keyboard = () => c(ref => {
+  ref.html(/*html*/`
+    <div class='keyboard'>
+      ${keyRows.map(row => /*html*/`
+        <div class='keyboard-row'>
+          ${row.split('').map(char => Key({ char })).join(' ')}
+        </div>
+      `).join(' ')}
+    </div>
+  `)
+})
 
-function Key(char) {
+const Key = ({ char }) => c(ref => {
   if (Number.isFinite(Number(char))) {
-    return {
-      tag: 'div',
-      class: char === '2' && 'key-2',
-    }
+    return ref.html(/*html*/`
+      <div class='${char === '2' ? 'key-2' : ''}'></div>
+    `)
   }
 
-  const isBackspace = char === '←'
+  ref.html(/*html*/`
+    <button class='key'>
+      <div class='key-shape'></div>
+      ${char}
+    </button>
+  `)
 
-  function _click() {
-    const key = isBackspace ? 'backspace' : char
+  ref.q('button').on('click', () => {
+    const key = char === '←' ? 'backspace' : char
     window.dispatchEvent(new KeyboardEvent('keydown', { key }))
-  }
-
-  return {
-    tag: 'button',
-    _click,
-    class: 'key',
-    c: [
-      { class: 'key-shape' },
-      char,
-    ]
-  }
-}
+  })
+})

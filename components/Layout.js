@@ -1,58 +1,59 @@
-import Board from './Board.js'
-import Keyboard from './Keyboard.js'
-import Suggestions from './Suggestions.js'
-import { isLetter } from '../lib/util.js'
+import { c } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
+import { Board } from './Board.js'
+import { Keyboard } from './Keyboard.js'
+import { Suggestions } from './Suggestions.js'
+import { cells, isLetter } from '../lib/util.js'
 
-export default function Layout({ store }) {
-  const cells = store([])
-  let holdingCtrlOrCmd = false
+let holdingCtrlOrCmd = false
 
-  function __keydown(e) {
-    const key = e.key.toLowerCase()
+export const Layout = () => c(ref => {
+  ref.html(/*html*/`
+    <section class='layout'>
+      <div class='col'>
+        ${Board({ onClick })}
+        ${Keyboard()}
+      </div>
+      <div class='col'>
+        ${Suggestions()}
+      </div>
+    </section>
+  `)
 
-    if (key === 'control' || key === 'meta')
-      holdingCtrlOrCmd = true
+  window.addEventListener('keydown', onKeyDown)
+  window.addEventListener('keyup', onKeyUp)
+})
 
-    if (holdingCtrlOrCmd)
-      return
+const onClick = e => {
+  const index = e.srcElement.dataset.index
+  const cell = cells.val[index]
 
-    if (key === 'backspace' && cells().length > 0) {
-      cells().pop()
-      cells(cells())
-    }
-    else if (!e.repeat && isLetter(key) && cells().length < 30) {
-      cells().push({ letter: key, state: 0 })
-      cells(cells())
-    }
+  if (!cell)
+    return
+
+  cell.state = (cell.state + 1) % 3
+  cells.val = cells.val
+}
+
+const onKeyDown = e => {
+  const key = e.key.toLowerCase()
+
+  if (key === 'control' || key === 'meta')
+    holdingCtrlOrCmd = true
+
+  if (holdingCtrlOrCmd)
+    return
+
+  if (key === 'backspace' && cells.val.length > 0) {
+    cells.val = cells.val.slice(0, -1)
   }
-
-  function __keyup(e) {
-    const key = e.key.toLowerCase()
-
-    if (key === 'control' || key === 'meta')
-      holdingCtrlOrCmd = false
+  else if (!e.repeat && isLetter(key) && cells.val.length < 30) {
+    cells.val = [...cells.val, { letter: key, state: 0 }]
   }
+}
 
-  function _click(e) {
-    const index = e.srcElement.dataset.index
-    const cell = cells()[index]
+const onKeyUp = e => {
+  const key = e.key.toLowerCase()
 
-    if (!cell)
-      return
-
-    cell.state = (cell.state + 1) % 3
-    cells(cells())
-  }
-
-  return { 
-    tag: 'section', class: 'layout', __keydown, __keyup, c: [
-      { class: 'col', c: [
-        { tag: Board, cells, _click },
-        { tag: Keyboard },
-      ]},
-      { class: 'col', c: [
-        { tag: Suggestions, cells },
-      ]},
-    ]
-  }
+  if (key === 'control' || key === 'meta')
+    holdingCtrlOrCmd = false
 }
