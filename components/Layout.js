@@ -1,4 +1,3 @@
-import { c } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
 import { Board } from './Board.js'
 import { Keyboard } from './Keyboard.js'
 import { Suggestions } from './Suggestions.js'
@@ -6,8 +5,8 @@ import { cells, isLetter } from '../lib/util.js'
 
 let holdingCtrlOrCmd = false
 
-export const Layout = () => c(ref => {
-  ref.html(/*html*/`
+export const Layout = () => ref => {
+  ref.html`
     <section class='layout'>
       <div class='col'>
         ${Board({ onClick })}
@@ -17,11 +16,11 @@ export const Layout = () => c(ref => {
         ${Suggestions()}
       </div>
     </section>
-  `)
+  `
 
   window.addEventListener('keydown', onKeyDown)
   window.addEventListener('keyup', onKeyUp)
-})
+}
 
 const onClick = e => {
   const index = e.srcElement.dataset.index

@@ -1,10 +1,10 @@
-import { q, watch } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
+import { q, watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.2.0/min.js'
 import { Layout } from './Layout.js'
 
 const root = q('#root')
 
 watch(() => {
-  root.html(/*html*/`
+  root.html`
     <header>
       <h1>Word Engine</h1>
     </header>
@@ -23,5 +23,5 @@ watch(() => {
         </a>
       </p>
     </footer>
-  `)
+  `
 })

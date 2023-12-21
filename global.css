@@ -166,8 +166,11 @@ button {
   gap: 6px;
 }
 
-.key {
+.key-outer {
   grid-column: span 2;
+}
+
+.key {
   background-color: var(--gray-700);
   border-radius: 0.375rem;
   font-size: 1.125rem;
