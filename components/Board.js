@@ -1,4 +1,4 @@
-import { watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.2.0/min.js'
+import { watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.2.1/min.js'
 import { cells } from '../lib/util.js'
 
 export const Board = ({ onClick }) => ref => {

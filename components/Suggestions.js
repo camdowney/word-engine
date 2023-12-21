@@ -1,4 +1,4 @@
-import { watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.2.0/min.js'
+import { watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.2.1/min.js'
 import filterWords from '../lib/filterWords.js'
 import getFiltersFromCells from '../lib/getFiltersFromCells.js'
 import { fiveLetterWords } from '../dictionary/fiveLetterWords.js'
