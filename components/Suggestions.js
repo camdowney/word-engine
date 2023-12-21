@@ -1,8 +1,8 @@
 import { c, watch } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
-import { cells, chunk } from '../lib/util.js'
-import { fiveLetterWords } from '../dictionary/fiveLetterWords.js'
 import filterWords from '../lib/filterWords.js'
 import getFiltersFromCells from '../lib/getFiltersFromCells.js'
+import { fiveLetterWords } from '../dictionary/fiveLetterWords.js'
+import { cells, chunk } from '../lib/util.js'
 
 export const Suggestions = () => c(ref => {
   watch(() => {
