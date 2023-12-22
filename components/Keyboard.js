@@ -1,5 +1,3 @@
-import { h } from 'https://cdn.jsdelivr.net/npm/neutro@2.3.0/min.js'
-
 const keyRows = [
   'qwertyuiop',
   '1asdfghjkl1',
@@ -9,11 +7,15 @@ const keyRows = [
 export const Keyboard = () => ref => {
   ref.html`
     <div class='keyboard'>
-      ${keyRows.map(chars => h`
-        <div class='keyboard-row'>
-          ${chars.split('').map(char => Key({ char }))}
-        </div>
-      `)}
+      ${keyRows.map(chars => Row({ chars }))}
+    </div>
+  `
+}
+
+const Row = ({ chars }) => ref => {
+  ref.html`
+    <div class='keyboard-row'>
+      ${chars.split('').map(char => Key({ char }))}
     </div>
   `
 }

@@ -1,4 +1,4 @@
-import { h, watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.3.0/min.js'
+import { watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.4.0/min.js'
 import { cells } from '../lib/util.js'
 
 export const Board = ({ onClick }) => ref => {
@@ -10,7 +10,7 @@ export const Board = ({ onClick }) => ref => {
         ${allCells.map((cell, i) => {
           const tag = (cell && cell.state >= 0) ? 'button' : 'div'
 
-          return h`
+          return `
             <${tag}
               class='cell'
               data-index=${i}
