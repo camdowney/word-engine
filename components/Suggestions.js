@@ -24,12 +24,9 @@ export const Suggestions = () => ref => {
   
     // TODO: refactor
     const loadMore = () => {
-      if (list.val.scrollTop < list.val.scrollHeight - 600)
+      if (current >= chunks.length || list.val.scrollTop < list.val.scrollHeight - 600)
         return
   
-      if (current >= chunks.length)
-        return list.val.removeEventListener('scroll', loadMore)
-      
       list.val.innerHTML += chunks[current++].map(word => `<p>${word}</p>`).join('')
     }
   

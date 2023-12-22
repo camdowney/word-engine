@@ -9,7 +9,7 @@ export const Layout = () => ref => {
   ref.html`
     <section class='layout'>
       <div class='col'>
-        ${Board({ onClick })}
+        ${Board()}
         ${Keyboard()}
       </div>
       <div class='col'>
@@ -20,17 +20,6 @@ export const Layout = () => ref => {
 
   window.addEventListener('keydown', onKeyDown)
   window.addEventListener('keyup', onKeyUp)
-}
-
-const onClick = e => {
-  const index = e.srcElement.dataset.index
-  const cell = cells.val[index]
-
-  if (!cell)
-    return
-
-  cell.state = (cell.state + 1) % 3
-  cells.val = cells.val
 }
 
 const onKeyDown = e => {
