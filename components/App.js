@@ -1,4 +1,4 @@
-import { q, watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.2.1/min.js'
+import { q, watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.3.0/min.js'
 import { Layout } from './Layout.js'
 
 const root = q('#root')
