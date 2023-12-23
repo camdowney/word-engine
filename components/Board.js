@@ -1,4 +1,4 @@
-import { watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.4.0/min.js'
+import { watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.4.1/min.js'
 import { cells } from '../lib/util.js'
 
 export const Board = () => ref => {
@@ -7,13 +7,13 @@ export const Board = () => ref => {
 
     ref.html`
       <div class='board'>
-        ${allCells.map((cell, index) => Cell({ cell, index }))}
+        ${allCells.map(cell => Cell({ cell }))}
       </div>
     `
   })
 }
 
-const Cell = ({ cell, index }) => ref => {
+const Cell = ({ cell }) => ref => {
   const tag = (cell && cell.state >= 0) ? 'button' : 'div'
 
   ref.html`
@@ -27,7 +27,7 @@ const Cell = ({ cell, index }) => ref => {
   `
 
   ref.on('click', () => {
-    data.state = (data.state + 1) % 3
+    cell.state = (cell.state + 1) % 3
     cells.val = cells.val
   })
 }
