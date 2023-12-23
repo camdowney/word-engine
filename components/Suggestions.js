@@ -1,37 +1,42 @@
-import { watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.4.0/min.js'
+import { store, watch } from 'https://cdn.jsdelivr.net/npm/neutro@2.4.0/min.js'
+import { fiveLetterWords } from '../dictionary/fiveLetterWords.js'
 import filterWords from '../lib/filterWords.js'
 import getFiltersFromCells from '../lib/getFiltersFromCells.js'
-import { fiveLetterWords } from '../dictionary/fiveLetterWords.js'
 import { cells, chunk } from '../lib/util.js'
+
+const currentChunk = store(1)
 
 export const Suggestions = () => ref => {
   watch(() => {
     const filtered = filterWords(fiveLetterWords, getFiltersFromCells(cells.val))
     const chunks = chunk(filtered, 100)
 
-    let current = 0
-  
     ref.html`
       <div class='suggestions'>
         <h2 class='suggestions-header'>
           Showing ${filtered.length} possible words
         </h2>
-        <div class='suggestions-list'></div>
+        ${List({ chunks })}
       </div>
     `
-  
-    const list = ref.q('.suggestions-list')
-  
-    // TODO: refactor
-    const loadMore = () => {
-      if (current >= chunks.length || list.val.scrollTop < list.val.scrollHeight - 600)
+  })
+}
+
+export const List = ({ chunks }) => ref => {
+  watch(() => {
+    const suggestions = chunks.slice(0, currentChunk.val).flat()
+
+    ref.class.add('suggestions-list')
+
+    ref.html`
+      ${suggestions.map(s => `<p>${s}</p>`)}
+    `
+
+    ref.on('scroll', () => {
+      if (currentChunk.val >= chunks.length || ref.val.scrollTop < ref.val.scrollHeight - 600)
         return
-  
-      list.val.innerHTML += chunks[current++].map(word => `<p>${word}</p>`).join('')
-    }
-  
-    loadMore()
-  
-    list.on('scroll', loadMore)
+
+      currentChunk.val++
+    })
   })
 }
