@@ -24,7 +24,7 @@ export const Suggestions = () => ref => {
   })
 }
 
-export const List = ({ chunks }) => ref => {
+const List = ({ chunks }) => ref => {
   watch(() => {
     const suggestions = chunks.slice(0, index.val).flat()
 
