@@ -35,10 +35,8 @@ const List = ({ chunks }) => ref => {
     `
 
     ref.on('scroll', () => {
-      if (index.val >= chunks.length || ref.val.scrollTop < ref.val.scrollHeight - 600)
-        return
-
-      index.val++
+      if (index.val < chunks.length && ref.val.scrollTop >= ref.val.scrollHeight - 600)
+        index.val++
     })
   })
 }
